@@ -1,0 +1,24 @@
+{
+  "llama_tag": "b10991",
+  "models": {
+    "mmproj-Qwen3.5-4B-F16.gguf": {
+      "url": "https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/e87f176479d0855a907a41277aca2f8ee7a09523/mmproj-F16.gguf",
+      "sha256": "cd88edcf8d031894960bb0c9c5b9b7e1fea6ebee02b9f7ce925a00d12891f864",
+      "size": 672423616
+    },
+    "Qwen3.5-0.8B-Q4_K_M.gguf": {
+      "url": "https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF/resolve/6ab461498e2023f6e3c1baea90a8f0fe38ab64d0/Qwen3.5-0.8B-Q4_K_M.gguf",
+      "sha256": "bd258782e35f7f458f8aced1adc053e6e92e89bc735ba3be89d38a06121dc517",
+      "size": 532517120
+    },
+    "Qwen3.5-4B-Q4_K_M.gguf": {
+      "url": "https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/e87f176479d0855a907a41277aca2f8ee7a09523/Qwen3.5-4B-Q4_K_M.gguf",
+      "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+      "size": 2740937888
+    }
+  },
+  "runtime": {
+    "url": "https://github.com/ggml-org/llama.cpp/releases/download/b10991/llama-b10991-bin-win-vulkan-x64.zip",
+    "sha256": "591c715f6a5727854e1c1f137afc985edca565e8b50225c80444e7f48c4cf59a"
+  }
+}
