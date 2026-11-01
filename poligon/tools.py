@@ -2,7 +2,7 @@
 import base64, datetime, io, json, os, platform, re, secrets, subprocess, time, webbrowser
 from pathlib import Path
 import httpx, psutil
-from . import state
+from . import state,memory
 
 def spec(name,description,props=None,required=None):
     return {'type':'function','function':{'name':name,'description':description,'parameters':{'type':'object','properties':props or {},'required':required or [],'additionalProperties':False}}}
@@ -120,7 +120,10 @@ def execute(name,args):
         else:pg.scroll(max(-20,min(20,int(args['amount']))))
         return {'executed':name}
     if name=='remember':
-        text=args['text'].strip()[:2000];state.execute('INSERT INTO memories VALUES (?,?,?)',(secrets.token_hex(8),text,time.time()));return {'saved':text}
+        text=args['text'].strip()[:2000]
+        item=memory.add(text,kind='preference',scope='global',source='explicit_user_request',confidence=1.0,status='confirmed',user_confirmed=True)
+        state.execute('INSERT INTO memories VALUES (?,?,?)',(secrets.token_hex(8),text,time.time()))
+        return {'saved':text,'memory_id':item['id'],'scope':'global'}
     if name=='schedule_task':
         due=datetime.datetime.fromisoformat(args['when']).timestamp();repeat=int(args.get('repeat_minutes',0))
         if due<=time.time() or (repeat and repeat<5):raise ValueError('Use um horário futuro e repetição mínima de 5 minutos')
