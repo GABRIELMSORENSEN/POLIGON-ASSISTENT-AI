@@ -1,0 +1,13 @@
+/* Polygon visual identity: dark graphite with restrained galactic violet accents. */
+:root{--polygon-accent:#b78cff;--polygon-accent-soft:#d7c1ff}
+button:focus-visible,a:focus-visible{outline-color:var(--polygon-accent)}
+.online-dot{background:var(--polygon-accent)}
+.nav.active{background:#30243f;color:#e2d3ff}
+.private-mark{color:#c5a6ff}
+.primary{background:var(--polygon-accent);border-color:var(--polygon-accent);color:#21172e}
+.pill{border-color:#514065;background:#251c32;color:#d0b8ff}
+.hero-symbol{color:#d7c1ff;border-color:#514065;background:radial-gradient(at top,#30243f,#171c1c)}
+#welcome h2 span{color:#cdb5ff}
+.request-bubble{background:#2b2236;border-color:#514065}
+.mini-symbol{background:var(--polygon-accent);color:#21172e}
+#pair-code{color:#d0b8ff}
