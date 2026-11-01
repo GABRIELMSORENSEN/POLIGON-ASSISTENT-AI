@@ -8,7 +8,7 @@ async function api(path,method='GET',body){if(native)return bridge(path,method,b
 function toast(text){$('toast').textContent=text;$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',6500)}
 function node(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
 async function action(fn){try{await fn()}catch(e){toast(e.message)}}
-function page(name){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+name));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.page===name));$('page-title').textContent={assistant:'Assistente',remote:'Meu computador',memory:'Memória',schedule:'Agendamentos',settings:'Configurações'}[name];if(name==='memory')action(loadMemories);if(name==='schedule')action(loadSchedules);if(name==='remote')action(loadDevices)}
+function page(name){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+name));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.page===name));$('page-title').textContent={assistant:'Assistente',models:'Modelos',remote:'Meu computador',memory:'Memória',schedule:'Agendamentos',settings:'Configurações'}[name];if(name==='models')action(loadModelCatalog);if(name==='memory')action(loadMemories);if(name==='schedule')action(loadSchedules);if(name==='remote')action(loadDevices)}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>page(b.dataset.page));document.querySelectorAll('[data-prompt]').forEach(b=>b.onclick=()=>{$('prompt').value=b.dataset.prompt;$('prompt').focus()});
 $('new-task').onclick=()=>{active=null;lastTask='';$('welcome').hidden=false;$('task-view').hidden=true;page('assistant');$('prompt').focus()};
 $('prompt').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('composer').requestSubmit()}};
@@ -21,6 +21,50 @@ async function refreshStatus(){status=await api('/status');const e=status.engine
 async function loadMemories(){const list=await api('/memories');renderList('memory-list',list,'Nenhuma memória salva.',m=>[m.text,new Date(m.created*1000).toLocaleString('pt-BR')],'/memories/')}
 async function loadSchedules(){const list=await api('/schedules');renderList('schedule-list',list,'Nenhuma tarefa agendada.',s=>[s.prompt,new Date(s.due*1000).toLocaleString('pt-BR')+(s.repeat_seconds?' · Repetição a cada '+Math.round(s.repeat_seconds/60)+' min':'')+(s.enabled?'':' · Finalizada')],'/schedules/')}
 function renderList(id,list,empty,format,route){$(id).replaceChildren();if(!list.length){$(id).append(node('div',empty,'empty'));return}for(const item of list){const row=node('div',undefined,'item'),info=node('div'),[title,sub]=format(item);info.append(node('div',title),node('small',sub));const b=node('button','Remover','text-button');b.onclick=()=>action(async()=>{await api(route+item.id,'DELETE');if(id==='memory-list')loadMemories();else loadSchedules()});row.append(info,b);$(id).append(row)}}
+let modelCatalogLoaded=false;
+async function loadModelCatalog(){
+ const root=$('model-catalog');
+ if(modelCatalogLoaded)return;
+ root.replaceChildren(node('div','Carregando catálogo…','empty'));
+ try{
+  const response=await fetch('/assets/model-catalog.json',{cache:'no-store'});
+  if(!response.ok)throw Error('Catálogo indisponível ('+response.status+').');
+  const catalog=await response.json();
+  const h=catalog.hardware_profile||{};
+  $('model-catalog-notice').replaceChildren(
+   node('b','Seu PC: '+(h.cpu||'CPU não identificada')+' · '+(h.ram_gb||'?')+' GB RAM · '+(h.gpu||'GPU não identificada')+' · '+(h.vram_gb||'?')+' GB VRAM'),
+   node('p',h.recommendation||'Compatibilidade será verificada ao instalar cada modelo.')
+  );
+  root.replaceChildren();
+  const labels={configured_manifest:'Previsto no instalador atual',partially_available:'Parcialmente disponível',catalog_only:'Catálogo — integração pendente',provider_pending:'Provedor — descoberta ao conectar',candidate:'Candidato — precisa validar'};
+  for(const provider of catalog.providers||[]){
+   const section=node('section',undefined,'provider-card');
+   const head=node('div',undefined,'provider-head');
+   const title=node('div');
+   title.append(node('h3',provider.name),node('p',provider.description||''));
+   const mode=node('span',provider.mode==='offline'?'OFFLINE':'ONLINE','provider-mode');
+   head.append(title,mode);section.append(head);
+   if(provider.docs){
+    const a=node('a','Documentação oficial ↗');a.href=provider.docs;a.target='_blank';a.rel='noopener noreferrer';a.className='provider-docs';section.append(a);
+   }
+   const models=provider.models||[];
+   if(!models.length)section.append(node('p','Os modelos serão descobertos no catálogo oficial quando o provedor for conectado.'));
+   for(const model of models){
+    const row=node('article',undefined,'model-row');
+    const top=node('div',undefined,'model-row-top');
+    const name=node('div');name.append(node('b',model.name),node('small',model.id));
+    top.append(name,node('span',labels[model.status]||model.status,'model-status'));
+    row.append(top);
+    if(model.tasks&&model.tasks.length)row.append(node('div',model.tasks.join(' · '),'model-tags'));
+    if(model.hardware)row.append(node('p',model.hardware));
+    if(model.cost)row.append(node('small',model.cost,'model-cost'));
+    section.append(row);
+   }
+   root.append(section);
+  }
+  modelCatalogLoaded=true;
+ }catch(error){root.replaceChildren(node('div','Não foi possível carregar o catálogo: '+error.message,'empty'))}
+}
 async function loadDevices(){if(!status.owner)return;const list=await api('/devices');$('devices').replaceChildren();for(const d of list.filter(d=>!d.revoked)){const row=node('div',undefined,'item'),b=node('button','Revogar','text-button');row.append(node('div',d.name));b.onclick=()=>action(async()=>{await api('/devices/'+d.id,'DELETE');await loadDevices()});row.append(b);$('devices').append(row)}}
 $('remote-start').onclick=()=>action(async()=>{await api('/remote/start','POST');toast('Abrindo conexão segura…');await refreshStatus()});$('remote-stop').onclick=()=>action(async()=>{await api('/remote/stop','POST');$('pair-details').hidden=true;await refreshStatus()});
 $('pair-generate').onclick=()=>action(async()=>{const p=await api('/pairing','POST');$('pair-code').textContent=p.code;$('pair-details').hidden=false;if(native){$('pair-qr').hidden=true}else{const r=await fetch('/api/pairing/qr',{headers:{'X-Poligon-Key':token}});if(!r.ok)throw Error('Falha ao gerar QR');if($('pair-qr').src.startsWith('blob:'))URL.revokeObjectURL($('pair-qr').src);$('pair-qr').src=URL.createObjectURL(await r.blob())}if(!status.remote_url)toast('Ative o acesso remoto antes de parear pela internet.')});
