@@ -17,6 +17,8 @@ def init():
         CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY,name TEXT NOT NULL,token_hash TEXT NOT NULL,created REAL,last_seen REAL,revoked INTEGER DEFAULT 0);
         CREATE TABLE IF NOT EXISTS tasks (id TEXT PRIMARY KEY,prompt TEXT,status TEXT,created REAL,updated REAL,mode TEXT,device TEXT,result TEXT DEFAULT '',error TEXT DEFAULT '',events TEXT DEFAULT '[]',approval TEXT DEFAULT '',decision TEXT DEFAULT '',cancel INTEGER DEFAULT 0);
         CREATE TABLE IF NOT EXISTS memories (id TEXT PRIMARY KEY,text TEXT,created REAL);
+        CREATE TABLE IF NOT EXISTS memory_items (id TEXT PRIMARY KEY,kind TEXT NOT NULL,scope TEXT NOT NULL,project TEXT NOT NULL DEFAULT '',content TEXT NOT NULL,source TEXT NOT NULL DEFAULT 'user_or_agent',confidence REAL NOT NULL DEFAULT 0.7,status TEXT NOT NULL DEFAULT 'proposed',user_confirmed INTEGER NOT NULL DEFAULT 0,sensitivity TEXT NOT NULL DEFAULT 'normal',created REAL NOT NULL,updated REAL NOT NULL);
+        CREATE INDEX IF NOT EXISTS idx_memory_scope ON memory_items(scope,project,updated);
         CREATE TABLE IF NOT EXISTS schedules (id TEXT PRIMARY KEY,prompt TEXT,due REAL,repeat_seconds INTEGER DEFAULT 0,enabled INTEGER DEFAULT 1);
         """)
         c.execute("UPDATE tasks SET status='interrupted',error='O aplicativo foi reiniciado. Reenvie para continuar.',updated=? WHERE status IN ('running','waiting')",(time.time(),))
