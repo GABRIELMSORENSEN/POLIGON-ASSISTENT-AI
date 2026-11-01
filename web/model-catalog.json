@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "product": "Polygon",
+  "updated_at": "2026-11-01",
+  "routing_modes": [
+    "manual",
+    "automatic",
+    "economy",
+    "offline_only"
+  ],
+  "policies": {
+    "free_tiers": "A free label never means unlimited access. Store provider quotas, rate limits and pricing with a verification timestamp.",
+    "authentication": "Use documented OAuth, device authorization or provider API keys. Never copy browser cookies or private application tokens.",
+    "offline": "A local model is available offline only after its runtime, weights, tokenizer and required assets are installed.",
+    "privacy": "Do not send files or prompts to cloud providers unless the selected provider and data-sharing mode permit it."
+  },
+  "providers": [
+    {
+      "id": "openai",
+      "name": "OpenAI / ChatGPT / Codex",
+      "category": "online",
+      "capabilities": [
+        "general",
+        "reasoning",
+        "coding",
+        "tools",
+        "vision",
+        "audio"
+      ],
+      "auth": [
+        "official_account_flow_when_supported",
+        "api_key"
+      ],
+      "billing": "chatgpt_plan_and_api_billing_are_separate",
+      "integration_status": "catalog_only",
+      "docs": "https://platform.openai.com/docs"
+    },
+    {
+      "id": "google-gemini",
+      "name": "Google Gemini",
+      "category": "online",
+      "capabilities": [
+        "general",
+        "reasoning",
+        "coding",
+        "tools",
+        "vision",
+        "audio"
+      ],
+      "auth": [
+        "google_oauth_when_supported",
+        "api_key"
+      ],
+      "billing": "free_quota_and_paid_tiers_vary_by_model_and_region",
+      "integration_status": "catalog_only",
+      "docs": "https://ai.google.dev/gemini-api/docs"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "category": "online",
+      "capabilities": [
+        "general",
+        "reasoning",
+        "coding",
+        "tools"
+      ],
+      "auth": [
+        "api_key"
+      ],
+      "billing": "consumer_chat_and_api_billing_are_separate",
+      "integration_status": "catalog_only",
+      "docs": "https://api-docs.deepseek.com/"
+    },
+    {
+      "id": "xai-grok",
+      "name": "xAI Grok",
+      "category": "online",
+      "capabilities": [
+        "general",
+        "reasoning",
+        "coding",
+        "search"
+      ],
+      "auth": [
+        "official_api_key",
+        "official_account_flow_when_supported"
+      ],
+      "billing": "consumer_limits_and_api_billing_are_separate",
+      "integration_status": "catalog_only",
+      "docs": "https://docs.x.ai/"
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "category": "online",
+      "capabilities": [
+        "general",
+        "coding",
+        "tools",
+        "vision"
+      ],
+      "auth": [
+        "api_key"
+      ],
+      "billing": "developer_free_tier_and_paid_usage_subject_to_current_limits",
+      "integration_status": "catalog_only",
+      "docs": "https://console.groq.com/docs"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "category": "online",
+      "capabilities": [
+        "general",
+        "reasoning",
+        "coding",
+        "vision",
+        "tools"
+      ],
+      "auth": [
+        "api_key"
+      ],
+      "billing": "some_routes_free_with_provider_specific_limits",
+      "integration_status": "catalog_only",
+      "docs": "https://openrouter.ai/docs"
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "category": "offline_runtime",
+      "capabilities": [
+        "local_inference",
+        "model_management",
+        "tools_via_adapter"
+      ],
+      "auth": [],
+      "billing": "local_compute_and_storage",
+      "integration_status": "planned",
+      "docs": "https://ollama.com/"
+    },
+    {
+      "id": "llama-cpp",
+      "name": "llama.cpp",
+      "category": "offline_runtime",
+      "capabilities": [
+        "local_inference",
+        "quantized_gguf",
+        "cpu",
+        "gpu_backends"
+      ],
+      "auth": [],
+      "billing": "local_compute_and_storage",
+      "integration_status": "existing_in_desktop_base",
+      "docs": "https://github.com/ggml-org/llama.cpp"
+    },
+    {
+      "id": "comfyui",
+      "name": "ComfyUI",
+      "category": "offline_media_runtime",
+      "capabilities": [
+        "image_generation",
+        "image_workflows",
+        "video_workflows_when_supported"
+      ],
+      "auth": [],
+      "billing": "local_compute_and_storage",
+      "integration_status": "planned",
+      "docs": "https://github.com/comfyanonymous/ComfyUI"
+    }
+  ],
+  "local_model_families": [
+    {
+      "family": "Qwen",
+      "tasks": [
+        "general",
+        "coding",
+        "reasoning",
+        "vision_in_supported_variants"
+      ],
+      "formats": [
+        "GGUF",
+        "provider_native"
+      ],
+      "runtime_candidates": [
+        "llama.cpp",
+        "Ollama"
+      ]
+    },
+    {
+      "family": "Gemma",
+      "tasks": [
+        "general",
+        "reasoning",
+        "coding",
+        "vision_in_supported_variants"
+      ],
+      "formats": [
+        "GGUF",
+        "provider_native"
+      ],
+      "runtime_candidates": [
+        "llama.cpp",
+        "Ollama"
+      ]
+    },
+    {
+      "family": "DeepSeek",
+      "tasks": [
+        "reasoning",
+        "coding",
+        "general"
+      ],
+      "formats": [
+        "GGUF",
+        "provider_native"
+      ],
+      "runtime_candidates": [
+        "llama.cpp",
+        "Ollama"
+      ]
+    },
+    {
+      "family": "Llama",
+      "tasks": [
+        "general",
+        "coding",
+        "reasoning"
+      ],
+      "formats": [
+        "GGUF",
+        "provider_native"
+      ],
+      "runtime_candidates": [
+        "llama.cpp",
+        "Ollama"
+      ]
+    },
+    {
+      "family": "Mistral",
+      "tasks": [
+        "general",
+        "coding"
+      ],
+      "formats": [
+        "GGUF",
+        "provider_native"
+      ],
+      "runtime_candidates": [
+        "llama.cpp",
+        "Ollama"
+      ]
+    },
+    {
+      "family": "GPT-OSS",
+      "tasks": [
+        "reasoning",
+        "tools",
+        "coding"
+      ],
+      "formats": [
+        "provider_native",
+        "supported_quantizations"
+      ],
+      "runtime_candidates": [
+        "Ollama",
+        "llama.cpp_when_compatible"
+      ]
+    }
+  ],
+  "model_record_required_fields": [
+    "id",
+    "provider_id",
+    "display_name",
+    "version",
+    "capabilities",
+    "context_window",
+    "quantization",
+    "download_bytes",
+    "ram_recommended_bytes",
+    "vram_recommended_bytes",
+    "license",
+    "source_url",
+    "verified_at",
+    "availability"
+  ],
+  "integration_status_values": [
+    "existing",
+    "planned",
+    "catalog_only",
+    "requires_credentials",
+    "unavailable"
+  ],
+  "hardware_profiles": {
+    "detection_required": true,
+    "compatibility_values": [
+      "comfortable",
+      "limited",
+      "not_recommended",
+      "unknown"
+    ],
+    "must_consider": [
+      "system_ram",
+      "available_ram",
+      "gpu_vendor",
+      "gpu_vram",
+      "backend_support",
+      "model_quantization",
+      "context_length",
+      "concurrent_apps"
+    ]
+  }
+}
