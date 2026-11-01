@@ -1,10 +1,10 @@
-<p align="center"><img src="web/logo.svg" width="90" alt="Poligon"></p>
-<h1 align="center">POLIGON · Inteligência local</h1>
-<p align="center">Uma IA no seu PC. Outra no seu celular. Ações reais, sem API externa de IA.</p>
+<p align="center"><img src="web/logo.svg" width="90" alt="Polygon"></p>
+<h1 align="center">POLYGON · Assistente multimodal</h1>
+<p align="center">Um assistente único para PC e Android, com modelos locais, provedores online e ferramentas extensíveis.</p>
 
 ## Baixar
 
-Abra [Releases](https://github.com/GABRIELMSORENSEN/POLIGON-ASSISTENT-AI/releases). Windows: extraia o ZIP inteiro e abra `POLIGON.exe`. Android: instale o APK ARM64 (Android 9 ou superior). Na primeira execução, abra **Configurações → Instalar componentes e modelo**. O download exige internet; depois a inferência funciona offline.
+Abra [Releases](https://github.com/GABRIELMSORENSEN/POLYGON-ASSISTENT-AI/releases). Windows: extraia o ZIP inteiro e abra `POLYGON.exe`. Android: instale o APK ARM64 (Android 9 ou superior). Na primeira execução, abra **Configurações → Instalar componentes e modelo**. O download exige internet; depois a inferência funciona offline.
 
 - PC: Qwen3.5 4B Q4_K_M, cerca de 2,74 GB, mais projetor visual de 672 MB. Vulkan permite usar GPUs AMD, Intel e NVIDIA compatíveis. Use camadas GPU = 0 para CPU.
 - Android: Qwen3.5 0.8B Q4_K_M, cerca de 533 MB, executado na CPU. Recomendado aparelho ARM64 com pelo menos 6 GB de RAM. O modelo usa memória e bateria; **Liberar memória** encerra o motor.
@@ -34,7 +34,7 @@ O modelo decide quais ferramentas chamar; o aplicativo executa, registra o resul
 3. No Android, abra **Meu computador**, informe endereço e código ou abra o QR pela câmera.
 4. Escolha **IA do celular** para raciocínio no telefone ou **IA do PC** para o modelo maior. A aba Meu computador também tem captura de tela, clique e teclado remotos.
 
-O código tem seis dígitos, expira em dez minutos e vale uma vez. Cada dispositivo recebe um token revogável. O PC precisa permanecer ligado, conectado e com Poligon aberto. O túnel Cloudflare é temporário: o endereço muda quando ele é recriado e o celular precisa ser pareado novamente. Não há promessa de disponibilidade contínua de túnel gratuito.
+O código tem seis dígitos, expira em dez minutos e vale uma vez. Cada dispositivo recebe um token revogável. O PC precisa permanecer ligado, conectado e com Polygon aberto. O túnel Cloudflare é temporário: o endereço muda quando ele é recriado e o celular precisa ser pareado novamente. Não há promessa de disponibilidade contínua de túnel gratuito.
 
 ## Privacidade e controle
 
@@ -80,4 +80,4 @@ Android: JDK 17, SDK 35, NDK 28, Gradle wrapper incluído. Veja [compilação](d
 
 ## Licenças
 
-Poligon: Apache-2.0, preservada do projeto original. [llama.cpp](https://github.com/ggml-org/llama.cpp): MIT. [Qwen3.5](https://huggingface.co/Qwen/Qwen3.5-4B): Apache-2.0; GGUFs por [Unsloth](https://huggingface.co/unsloth). [cloudflared](https://github.com/cloudflare/cloudflared): Apache-2.0. Os componentes mantêm suas licenças próprias; consulte `THIRD_PARTY_NOTICES.md`.
+Polygon: Apache-2.0, preservada do projeto original. [llama.cpp](https://github.com/ggml-org/llama.cpp): MIT. [Qwen3.5](https://huggingface.co/Qwen/Qwen3.5-4B): Apache-2.0; GGUFs por [Unsloth](https://huggingface.co/unsloth). [cloudflared](https://github.com/cloudflare/cloudflared): Apache-2.0. Os componentes mantêm suas licenças próprias; consulte `THIRD_PARTY_NOTICES.md`.
