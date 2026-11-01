@@ -5,7 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request, UploadFile, File
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from . import __version__,state,engine,tools,agent,installer
+from . import __version__,state,engine,tools,agent,installer,memory
 
 state.init()
 PAIR={'code':'','expires':0};attempts={};tunnel_process=None;tunnel_url=''
@@ -99,6 +99,30 @@ def memories(identity=Depends(who)):return state.rows('SELECT * FROM memories OR
 @app.delete('/api/memories/{ident}')
 def delete_memory(ident:str,identity=Depends(who)):
     state.execute('DELETE FROM memories WHERE id=?',(ident,));return {'ok':True}
+class MemoryIn(BaseModel):
+    content:str=Field(min_length=1,max_length=4000)
+    kind:str='note'
+    scope:str='global'
+    project:str=''
+    sensitivity:str='normal'
+
+@app.get('/api/memory-items')
+def memory_items(identity=Depends(who),project:str=''):
+    return memory.list_items(project=project if project else None)
+
+@app.post('/api/memory-items')
+def create_memory(body:MemoryIn,identity=Depends(who)):
+    try:
+        return memory.add(body.content,kind=body.kind,scope=body.scope,project=body.project,
+                          source='user_entry',confidence=1.0,status='confirmed',user_confirmed=True,
+                          sensitivity=body.sensitivity)
+    except ValueError as e: raise HTTPException(400,str(e))
+
+@app.delete('/api/memory-items/{ident}')
+def remove_memory_item(ident:str,identity=Depends(who)):
+    if not memory.get(ident): raise HTTPException(404,'Memória não encontrada')
+    memory.delete(ident);return {'ok':True}
+
 @app.get('/api/schedules')
 def schedules(identity=Depends(who)):return state.rows('SELECT * FROM schedules ORDER BY due')
 @app.delete('/api/schedules/{ident}')
