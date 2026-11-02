@@ -101,3 +101,14 @@ O workflow de build prepara os runtimes oficiais, compila o servidor Android com
 ## Licenças
 
 Poligon: Apache-2.0, preservada do projeto original. [llama.cpp](https://github.com/ggml-org/llama.cpp): MIT. [Qwen](https://huggingface.co/Qwen): confira a licença do modelo específico e do artefato GGUF usado. [cloudflared](https://github.com/cloudflare/cloudflared): Apache-2.0. Os componentes mantêm suas licenças próprias; consulte `THIRD_PARTY_NOTICES.md`.
+
+
+## POLIGON Studio (primeira etapa)
+
+A área **Studio** adiciona integrações criativas no aplicativo Windows:
+- **ElevenLabs:** consulta a biblioteca de vozes da conta e gera narração MP3 por texto.
+- **Runway Dev:** inicia geração de vídeo por texto e permite consultar o estado e abrir o resultado.
+
+As chaves são guardadas no cofre de credenciais do sistema operacional. O aplicativo não envia uma geração sem ação explícita do usuário. As APIs são serviços externos e podem consumir créditos ou gerar cobrança; as assinaturas/créditos dos sites de consumo não devem ser presumidos como válidos nas APIs. Consulte os preços e limites diretamente antes de gerar.
+
+Configuração: abra **Studio**, conecte a chave de API criada no painel de desenvolvedor de cada serviço e use os formulários. A conexão apenas guarda a chave; ela será validada quando o primeiro pedido chegar ao serviço. O Studio nesta etapa é somente geração de voz e clipes. A timeline multipista, cortes, transições, legendas e renderização final serão entregues em uma etapa própria de edição não destrutiva.
