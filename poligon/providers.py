@@ -252,9 +252,36 @@ def _gemini_messages(messages):
             contents.append({"role": "user", "parts": [{"functionResponse": {"name": name, "response": response}}]})
     return contents, system
 
-def chat(messages, tools=None, max_tokens=1024):
-    provider = state.get("online_provider", "local")
-    model = state.get("online_model", "")
+
+def auto_chat(messages, tools=None, max_tokens=1024):
+    """Try only providers/models with a verified no-model-charge tier; return None for local fallback."""
+    candidates = []
+    try:
+        if credential("openrouter"):
+            candidates.append(("openrouter", "openrouter/free"))
+    except Exception:
+        pass
+    try:
+        if credential("gemini"):
+            available = {m["id"] for m in list_models("gemini")}
+            preferred = next((m for m in ("gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite") if m in available), None)
+            if preferred:
+                candidates.append(("gemini", preferred))
+    except Exception:
+        pass
+    if not candidates:
+        return None
+    failures = []
+    for provider, model in candidates:
+        try:
+            return chat(messages, tools, max_tokens, provider_override=provider, model_override=model)
+        except Exception as exc:
+            failures.append(f"{provider}: {exc}")
+    raise RuntimeError("Nenhum provedor gratuito respondeu. " + " | ".join(failures)[:1200])
+
+def chat(messages, tools=None, max_tokens=1024, provider_override=None, model_override=None):
+    provider = provider_override or state.get("online_provider", "local")
+    model = model_override or state.get("online_model", "")
     if provider not in PROVIDERS or not model:
         raise RuntimeError("Selecione um provedor e um modelo online na aba Modelos.")
     key = credential(provider)
