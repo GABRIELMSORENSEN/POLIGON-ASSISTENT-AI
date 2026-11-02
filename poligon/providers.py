@@ -10,6 +10,8 @@ import httpx
 from . import state
 
 SERVICE = "POLIGON online providers"
+# Checked against Google Gemini API pricing on 2026-11-02. Keep paid/unknown models out of the no-cost selector.
+GEMINI_FREE_MODEL_IDS = {"gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite"}
 PROVIDERS = {
     "gemini": {
         "name": "Google Gemini API",
@@ -109,12 +111,12 @@ def list_models(provider):
         for item in data.get("models", []):
             methods = item.get("supportedGenerationMethods", [])
             name = item.get("name", "")
-            if "generateContent" in methods and name:
+            if "generateContent" in methods and name and name.removeprefix("models/") in GEMINI_FREE_MODEL_IDS:
                 result.append({
                     "id": name.removeprefix("models/"),
                     "name": item.get("displayName", name),
                     "description": item.get("description", "")[:220],
-                    "free_note": PROVIDERS[provider]["free"]
+                    "free_note": "Modelo incluído na lista gratuita consultada em 2026-11-02; cotas e disponibilidade podem mudar."
                 })
         return sorted(result, key=lambda x: x["id"])
     if provider == "openrouter":
