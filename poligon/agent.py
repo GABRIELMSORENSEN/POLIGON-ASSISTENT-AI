@@ -19,7 +19,9 @@ def run(ident):
             selected=state.get("online_provider","local")
             if selected=="auto":
                 response=providers.auto_chat(messages,tools.SCHEMAS)
-                if response is None:response=engine.chat(messages,tools.SCHEMAS)
+                if response is None:
+                    state.event(ident,"status","Provedor gratuito indisponível; continuando com a IA local offline.")
+                    response=engine.chat(messages,tools.SCHEMAS)
             elif selected!="local":response=providers.chat(messages,tools.SCHEMAS)
             else:response=engine.chat(messages,tools.SCHEMAS)
             calls=response.get('tool_calls') or []
