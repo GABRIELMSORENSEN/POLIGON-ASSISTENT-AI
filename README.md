@@ -28,7 +28,7 @@ A aba **Modelos** descobre modelos dinamicamente nos endpoints oficiais e permit
 | Mistral API | Pago por uso | Confira preços e eventuais créditos de avaliação. |
 | OpenAI API | Pago por uso | Uma assinatura ChatGPT não inclui créditos de API. |
 
-**Não existe fallback automático para um modelo pago.** Para manter chamadas sem cobrança de modelo, selecione apenas Gemini elegível no plano gratuito ou variantes gratuitas do OpenRouter. O app não envia prompts a um provedor online até o proprietário conectar e selecionar esse provedor. O modo **Automático · grátis primeiro** tenta OpenRouter gratuito, depois os modelos Gemini gratuitos permitidos e, se nenhum estiver configurado, volta para a IA local. Ele não escolhe DeepSeek, Grok, Mistral, OpenAI ou Cerebras automaticamente. As chaves são guardadas no cofre de credenciais do sistema operacional via `keyring`; no Windows, use o Gerenciador de Credenciais. Se não houver um cofre seguro disponível, a conexão é recusada.
+**Não existe fallback automático para um modelo pago.** Para manter chamadas sem cobrança de modelo, selecione apenas Gemini elegível no plano gratuito ou variantes gratuitas do OpenRouter. O app não envia prompts a um provedor online até o proprietário conectar e selecionar esse provedor. O modo **Automático · grátis primeiro** tenta OpenRouter gratuito, depois os modelos Gemini gratuitos permitidos e, se nenhum estiver configurado ou responder, volta para a IA local. Ele não escolhe DeepSeek, Grok, Mistral, OpenAI ou Cerebras automaticamente. As chaves são guardadas no cofre de credenciais do sistema operacional via `keyring`; no Windows, use o Gerenciador de Credenciais. Se não houver um cofre seguro disponível, a conexão é recusada.
 
 ## Chat, voz e memória
 
