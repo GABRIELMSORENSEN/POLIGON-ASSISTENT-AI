@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "reviewed_at": "2026-11-01",
-  "notice": "Catálogo inicial. Itens marcados como catálogo ainda não estão conectados ao motor de inferência. IDs de API e disponibilidade devem ser verificados no provedor ao conectar.",
+  "reviewed_at": "2026-11-02",
+  "notice": "Catálogo local inicial e catálogo online dinâmico. Provedores conectados consultam seus modelos reais; os modelos online não conectados permanecem como pendentes. Não há IDs de modelo inventados.",
   "hardware_profile": {
     "cpu": "AMD Ryzen 7 5700G",
     "ram_gb": 24,
@@ -120,208 +120,44 @@
       "id": "openai",
       "name": "OpenAI API",
       "mode": "online",
-      "status": "catalog_only",
+      "status": "provider_pending",
       "description": "Acesso por API e cobrança separada por uso. Uma assinatura ChatGPT não fornece automaticamente créditos de API.",
       "docs": "https://platform.openai.com/docs",
-      "models": [
-        {
-          "id": "gpt-6-astra",
-          "name": "GPT-6 Astra",
-          "tasks": [
-            "reasoning",
-            "complex_tasks"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "gpt-6.1-sol",
-          "name": "GPT-6.1 Sol",
-          "tasks": [
-            "general",
-            "coding",
-            "tools"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "gpt-6-luna",
-          "name": "GPT-6 Luna",
-          "tasks": [
-            "fast",
-            "low_cost",
-            "general"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "gpt-5.3-codex",
-          "name": "GPT-5.3 Codex",
-          "tasks": [
-            "coding",
-            "repository_tasks"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "gpt-realtime-2.1-mini",
-          "name": "GPT Realtime 2.1 Mini",
-          "tasks": [
-            "realtime_voice",
-            "audio",
-            "vision"
-          ],
-          "status": "catalog_only",
-          "cost": "Áudio e tokens podem ter tarifação própria."
-        },
-        {
-          "id": "gpt-image-2.5-sunburst",
-          "name": "GPT Image 2.5 Sunburst",
-          "tasks": [
-            "image_generation",
-            "image_editing"
-          ],
-          "status": "catalog_only",
-          "cost": "Geração de imagem cobrada conforme modalidade e uso."
-        }
-      ]
+      "models": []
     },
     {
       "id": "google",
       "name": "Google Gemini API",
       "mode": "online",
-      "status": "catalog_only",
-      "description": "Modelos de texto, multimodais, voz ao vivo, TTS e transcrição.",
+      "status": "provider_pending",
+      "description": "Integração Gemini por API key; modelos descobertos no endpoint oficial e cotas gratuitas dependem do modelo e da região.",
       "docs": "https://ai.google.dev/gemini-api/docs/models",
-      "models": [
-        {
-          "id": "gemini-4-argon",
-          "name": "Gemini 4 Argon",
-          "tasks": [
-            "reasoning",
-            "long_context",
-            "multimodal"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "gemini-3.8-flash",
-          "name": "Gemini 3.8 Flash",
-          "tasks": [
-            "general",
-            "coding",
-            "agents"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "gemini-3.8-live",
-          "name": "Gemini 3.8 Live",
-          "tasks": [
-            "realtime_voice",
-            "audio"
-          ],
-          "status": "catalog_only",
-          "cost": "Áudio em tempo real pode ter tarifação própria."
-        },
-        {
-          "id": "gemini-3.8-flash-tts",
-          "name": "Gemini 3.8 Flash TTS",
-          "tasks": [
-            "tts",
-            "dubbing"
-          ],
-          "status": "catalog_only",
-          "cost": "Consultar preço e limites de áudio."
-        },
-        {
-          "id": "gemini-3.5-transcribe",
-          "name": "Gemini 3.5 Transcribe",
-          "tasks": [
-            "transcription",
-            "subtitles"
-          ],
-          "status": "catalog_only",
-          "cost": "Consultar preço e limites de áudio."
-        }
-      ]
+      "models": []
     },
     {
       "id": "deepseek",
       "name": "DeepSeek API",
       "mode": "online",
-      "status": "catalog_only",
+      "status": "provider_pending",
       "description": "Opção para programação, raciocínio e tarefas de agente. O endpoint de modelos permite consultar disponibilidade e metadados.",
       "docs": "https://api-docs.deepseek.com/",
-      "models": [
-        {
-          "id": "deepseek-v4.1-flash",
-          "name": "DeepSeek V4.1 Flash",
-          "tasks": [
-            "coding",
-            "reasoning",
-            "agents",
-            "vision"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "deepseek-v4-flash",
-          "name": "DeepSeek V4 Flash",
-          "tasks": [
-            "coding",
-            "reasoning",
-            "agents"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; confirmar disponibilidade atual no endpoint."
-        }
-      ]
+      "models": []
     },
     {
       "id": "mistral",
       "name": "Mistral API",
       "mode": "online",
-      "status": "catalog_only",
+      "status": "provider_pending",
       "description": "Modelos gerais e de código; também oferece modelos locais open-weight.",
       "docs": "https://docs.mistral.ai/models",
-      "models": [
-        {
-          "id": "mistral-large-4",
-          "name": "Mistral Large 4",
-          "tasks": [
-            "general",
-            "reasoning",
-            "multimodal"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        },
-        {
-          "id": "mistral-small-4",
-          "name": "Mistral Small 4",
-          "tasks": [
-            "general",
-            "coding",
-            "reasoning"
-          ],
-          "status": "catalog_only",
-          "cost": "Pago por uso; consultar preço atual do provedor."
-        }
-      ]
+      "models": []
     },
     {
       "id": "xai",
       "name": "xAI / Grok",
       "mode": "online",
       "status": "provider_pending",
-      "description": "Provedor previsto. Os IDs de modelo serão obtidos do catálogo oficial no momento da conexão, em vez de fixar um nome que pode mudar.",
+      "description": "Integração Grok ainda pendente; não exibir modelos fictícios.",
       "docs": "https://docs.x.ai/",
       "models": []
     },
@@ -330,8 +166,17 @@
       "name": "OpenRouter",
       "mode": "online",
       "status": "provider_pending",
-      "description": "Gateway opcional para descobrir e acessar modelos de diferentes provedores. O modelo e o preço serão apresentados antes do uso.",
+      "description": "Modelos gratuitos descobertos em tempo real. O aplicativo restringe a lista às variantes :free e ao roteador openrouter/free.",
       "docs": "https://openrouter.ai/docs",
+      "models": []
+    },
+    {
+      "id": "cerebras",
+      "name": "Cerebras Inference",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Catálogo descoberto dinamicamente. Crédito promocional de avaliação pode expirar e não equivale a plano gratuito permanente.",
+      "docs": "https://inference-docs.cerebras.ai/",
       "models": []
     }
   ]
