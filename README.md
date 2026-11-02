@@ -1,52 +1,70 @@
 <p align="center"><img src="web/logo.svg" width="90" alt="Poligon"></p>
-<h1 align="center">POLIGON · Inteligência local</h1>
-<p align="center">Uma IA no seu PC. Outra no seu celular. Ações reais, sem API externa de IA.</p>
+<h1 align="center">POLIGON</h1>
+<p align="center">Um assistente multimodelo para Windows e Android: chat, voz, memória compartilhada e ações reais no dispositivo.</p>
 
-## Baixar
+## Baixar e compilar
 
-Abra [Releases](https://github.com/GABRIELMSORENSEN/POLIGON-ASSISTENT-AI/releases). Windows: extraia o ZIP inteiro e abra `POLIGON.exe`. Android: instale o APK ARM64 (Android 9 ou superior). Na primeira execução, abra **Configurações → Instalar componentes e modelo**. O download exige internet; depois a inferência funciona offline.
+As versões publicadas ficam em [GitHub Releases](https://github.com/GABRIELMSORENSEN/POLIGON-ASSISTENT-AI/releases). O workflow **POLIGON desktop and Android builds** também gera artefatos de Windows e Android em GitHub Actions. O APK Android é ARM64 e requer Android 9 ou superior.
 
-- PC: Qwen3.5 4B Q4_K_M, cerca de 2,74 GB, mais projetor visual de 672 MB. Vulkan permite usar GPUs AMD, Intel e NVIDIA compatíveis. Use camadas GPU = 0 para CPU.
-- Android: Qwen3.5 0.8B Q4_K_M, cerca de 533 MB, executado na CPU. Recomendado aparelho ARM64 com pelo menos 6 GB de RAM. O modelo usa memória e bateria; **Liberar memória** encerra o motor.
-- Modelos não são incluídos no Git. URLs de revisões fixas e SHA-256 estão em `models-manifest.json`; downloads novos são verificados antes de instalar.
+O build Windows inclui o motor llama.cpp Vulkan e o cliente Cloudflare. O build Android compila o servidor llama.cpp para ARM64 e o inclui no APK. Os modelos não são empacotados: são baixados sob demanda, verificados por SHA-256 e ficam no armazenamento privado/local.
 
-## O que faz
+## Modelos locais e offline
 
-| Função | PC | Android |
+- **Windows:** Qwen3.5 4B Q4_K_M (~2,74 GB) e projetor visual (~672 MB). A configuração de referência é Ryzen 7 5700G, 24 GB RAM e Radeon RX 7600 8 GB. Vulkan é o caminho de aceleração; CPU pode ser selecionada com camadas GPU = 0.
+- **Android:** Qwen3.5 0.8B Q4_K_M (~533 MB), executado na CPU. Recomendado ARM64 com pelo menos 6 GB de RAM. Consome memória, bateria e armazenamento.
+- Os modelos ficam em `models-manifest.json`; URLs apontam para revisões fixas e downloads são verificados. Outros modelos no catálogo local ainda são candidatos, não downloads prontos.
+
+## Modelos online
+
+A aba **Modelos** descobre modelos dinamicamente nos endpoints oficiais e permite conectar:
+
+| Provedor | Situação de custo | Observação |
 |---|---|---|
-| Conversa com IA local, sem chave de API | Sim | Sim |
-| Memória persistente de preferências | Sim | Sim |
-| Arquivos: listar, pesquisar, ler, escrever com backup | Sim | Via PC pareado |
-| Terminal PowerShell / shell | Sim | Via PC pareado |
-| Abrir aplicativos, páginas e ler páginas web | Sim | Via PC pareado |
-| Capturar tela, clicar, digitar e usar atalhos | Sim; visão exige projetor | Controles remotos e IA do PC |
-| Agendar tarefas persistentes | Sim; exige PC/app em execução | Via IA do PC |
-| Informações reais de bateria e modelo do celular | — | Sim |
-| Histórico de ferramentas e resultados | Sim | Sim |
-| Executar automaticamente ou revisar cada ação | Sim | Sim |
+| Google Gemini API | Camada gratuita para modelos elegíveis | Limites dependem do modelo, região e conta; confira a cota no AI Studio. |
+| OpenRouter | Variantes gratuitas | O Poligon restringe a seleção a `openrouter/free` e modelos `:free`; disponibilidade e limites mudam. |
+| Cerebras Inference | Crédito promocional de avaliação | Pode exigir método de pagamento e expirar; não é gratuidade permanente. |
+| DeepSeek API | Pago por uso | Modelos e capacidades consultados dinamicamente. |
+| xAI / Grok API | Pago por uso | Não é incluído em uma assinatura ChatGPT. |
+| Mistral API | Pago por uso | Confira preços e eventuais créditos de avaliação. |
+| OpenAI API | Pago por uso | Uma assinatura ChatGPT não inclui créditos de API. |
 
-O modelo decide quais ferramentas chamar; o aplicativo executa, registra o resultado real e o devolve ao modelo. Não são respostas fixas simulando ações. A IA do celular pode chamar `send_pc_task` e consultar `get_pc_task`, intermediando uma tarefa pela internet.
+**Não existe fallback automático para um modelo pago.** Para manter chamadas sem cobrança de modelo, selecione apenas Gemini elegível no plano gratuito ou variantes gratuitas do OpenRouter. O app não envia prompts a um provedor online até o proprietário conectar e selecionar esse provedor. As chaves são guardadas no cofre de credenciais do sistema operacional via `keyring`; no Windows, use o Gerenciador de Credenciais. Se não houver um cofre seguro disponível, a conexão é recusada.
 
-## Conectar o celular ao PC
+## Chat, voz e memória
 
-1. No PC, abra **Meu computador → Ativar acesso remoto**.
+- Chat e modo de voz usam o mesmo fluxo de tarefas e o mesmo histórico.
+- A interface de voz tem uma esfera galáctica animada. No Android, usa `SpeechRecognizer` com preferência por reconhecimento offline e `TextToSpeech` do sistema; a disponibilidade offline depende do serviço de voz instalado. No Windows, depende do suporte de voz do WebView/navegador.
+- Preferências salvas são usadas pelos diferentes modelos. Quando Android e PC estão pareados, as memórias são sincronizadas e também ficam em cache local para uso offline.
+- A memória é contexto útil, não treinamento dos pesos dos modelos: trocar de modelo não altera seus parâmetros.
+
+## Ações e acesso aos dispositivos
+
+| Função | Windows | Android |
+|---|---|---|
+| Inferência local/offline | Sim | Sim |
+| Provedores online configurados no PC | Sim | Via PC pareado |
+| Arquivos, terminal, navegador e aplicativos | Sim | Via PC pareado |
+| Captura de tela, clique, teclado e rolagem | Sim | Controles remotos do PC |
+| Informações de bateria e hardware do celular | — | Sim |
+| Histórico, tarefas e memórias | Sim | Sim |
+| Modo automático ou revisão de ações | Sim | Sim |
+
+O modelo escolhe ferramentas; o aplicativo executa e devolve resultados reais. No modo **Executar ações**, o agente recebe os privilégios do processo do usuário. No modo **Revisar cada ação**, ferramentas que alteram dados aguardam aprovação. Escritas por `write_file` fazem backup, mas comandos de terminal podem alterar arquivos diretamente. Use o modo de revisão para tarefas sensíveis.
+
+## Conectar Android ao PC
+
+1. No Windows, abra **Meu computador → Ativar acesso remoto**.
 2. Gere um código e copie o endereço HTTPS temporário.
-3. No Android, abra **Meu computador**, informe endereço e código ou abra o QR pela câmera.
-4. Escolha **IA do celular** para raciocínio no telefone ou **IA do PC** para o modelo maior. A aba Meu computador também tem captura de tela, clique e teclado remotos.
+3. No Android, abra **Meu computador**, informe endereço e código ou use o QR.
+4. Escolha **IA do celular** para inferência local no telefone ou **IA do PC** para usar o modelo e os provedores configurados no computador.
 
-O código tem seis dígitos, expira em dez minutos e vale uma vez. Cada dispositivo recebe um token revogável. O PC precisa permanecer ligado, conectado e com Poligon aberto. O túnel Cloudflare é temporário: o endereço muda quando ele é recriado e o celular precisa ser pareado novamente. Não há promessa de disponibilidade contínua de túnel gratuito.
+O código de pareamento é de uso único e expira em dez minutos. Cada dispositivo recebe um token revogável. O PC precisa permanecer ligado, conectado e com Poligon aberto. O túnel Cloudflare é temporário e o endereço pode mudar. O tráfego remoto passa por HTTPS/Cloudflare, não por uma camada independente de criptografia ponta a ponta. Um dispositivo pareado tem acesso amplo às ações do PC; revogue dispositivos que não reconhece e pause o acesso remoto quando não estiver usando.
 
-## Privacidade e controle
+## Limites e recursos ainda em desenvolvimento
 
-A inferência local continua sendo o padrão e funciona offline. Se o proprietário conectar e selecionar um provedor online, o texto da conversa e os resultados das ferramentas necessários à tarefa serão enviados ao provedor escolhido. As chaves ficam no cofre de credenciais do sistema operacional via `keyring` e não são exibidas novamente pela interface. No Windows, use o Gerenciador de Credenciais; em sistemas sem um cofre seguro configurado, a conexão é recusada. As chamadas online podem estar sujeitas a limites, preços, retenção e políticas de dados do respectivo provedor. Android usa o PC pareado para tarefas online; as credenciais não são copiadas para o celular.
+Modelos pequenos não têm o mesmo raciocínio de modelos grandes na nuvem e podem interpretar pedidos incorretamente. O Android não ultrapassa a sandbox do sistema nem controla arbitrariamente outros aplicativos. Ações já iniciadas podem terminar antes de um cancelamento. O agendador do PC depende do aplicativo estar em execução para processar tarefas.
 
-Acesso remoto passa por HTTPS/Cloudflare (não é criptografia ponta a ponta independente do provedor). Quem possui um token pareado tem acesso amplo aos arquivos e ações do PC. Use **Pausar acesso ao PC**, **Revogar** ou **Desconectar túnel** quando necessário. O servidor do PC e os motores de inferência escutam apenas no loopback por padrão. A ponte Android carrega somente os assets locais e bloqueia páginas e frames externos.
-
-## Limites reais
-
-Um modelo de 4B/0.8B não tem a capacidade de raciocínio de grandes modelos de nuvem. Pode interpretar pedidos incorretamente. Revise tarefas importantes. Não controla outros aplicativos do Android nem supera as permissões/sandbox do sistema. Não executa ações com o PC desligado. Cancelar interrompe as próximas etapas; uma chamada já em execução pode terminar antes. O agendador recupera tarefas vencidas ao abrir o PC e executa uma vez, sem reproduzir todas as repetições perdidas.
-
-O modo automático dá ao assistente os privilégios do processo do usuário. Escritas via `write_file` fazem backup; comandos de terminal podem alterar arquivos diretamente. Há limite de 16 etapas por tarefa no PC, 8 no celular e 90 segundos por comando de terminal.
+As integrações avançadas de edição de vídeo com timeline profissional, Runway, ElevenLabs, geração de imagem/vídeo, Unity/VRChat e Blender ainda não estão concluídas. O modo de voz atual usa os serviços de reconhecimento e síntese disponíveis no dispositivo; não é um sistema de voz neural proprietário nem garante reconhecimento offline em todos os aparelhos.
 
 ## Executar pelo código
 
@@ -58,26 +76,28 @@ python scripts/setup.py
 python poligon_assistent.py
 ```
 
-Windows 10/11 com WebView2. O setup instala llama.cpp e os modelos; o pacote Windows da Release já inclui o motor e cloudflared. Para executar do código com acesso remoto, coloque o executável oficial `cloudflared.exe` em `runtime/`. Linux/macOS podem executar o backend Python com `llama-server` no PATH, mas não foram validados nesta versão e não recebem binários rotulados como testados.
+Para validar backend e interfaces:
 
 ```powershell
 python -m unittest discover -s tests -v
-python poligon_assistent.py --headless
-python scripts/build_windows.py
+python scripts/check_android_assets.py
+node --check web/app.js
+node --check web/providers.js
+node --check web/voice.js
 ```
 
-Android: JDK 17, SDK 35, NDK 28, Gradle wrapper incluído. Veja [compilação](docs/BUILD.md) e [validação](docs/VALIDATION.md).
+O workflow de build prepara os runtimes oficiais, compila o servidor Android com NDK 28 e produz o pacote Windows portátil e o APK ARM64. Para publicar uma Release manualmente, execute o workflow **POLIGON desktop and Android builds** com `publish_release=true`; pushes de tags `v*` também publicam após os dois builds passarem.
 
 ## Estrutura
 
 - `poligon/agent.py`: agente, ferramentas, revisão e tarefas duráveis.
-- `poligon/tools.py`: implementações reais de arquivos, shell, tela e memória.
-- `poligon/server.py`: API autenticada, pareamento, túnel e interface.
-- `poligon/engine.py`: processo local llama.cpp.
-- `android/`: app nativo Java, WebView restrita e processo llama.cpp ARM64.
-- `web/`: interface adaptável compartilhada entre PC e Android.
-- `tests/`: autenticação, revogação, backup, pausa, shell, memória e agenda.
+- `poligon/providers.py`: Gemini, OpenRouter, Cerebras, DeepSeek, xAI, Mistral e OpenAI API.
+- `poligon/tools.py`: arquivos, shell, tela, memória e agendamentos.
+- `poligon/server.py`: API autenticada, pareamento, provedores e túnel.
+- `poligon/engine.py`: processo llama.cpp local.
+- `android/`: app Java, WebView restrita, voz nativa e servidor llama.cpp ARM64.
+- `web/`: interface compartilhada; os assets Android são verificados por `scripts/check_android_assets.py`.
 
 ## Licenças
 
-Poligon: Apache-2.0, preservada do projeto original. [llama.cpp](https://github.com/ggml-org/llama.cpp): MIT. [Qwen3.5](https://huggingface.co/Qwen/Qwen3.5-4B): Apache-2.0; GGUFs por [Unsloth](https://huggingface.co/unsloth). [cloudflared](https://github.com/cloudflare/cloudflared): Apache-2.0. Os componentes mantêm suas licenças próprias; consulte `THIRD_PARTY_NOTICES.md`.
+Poligon: Apache-2.0, preservada do projeto original. [llama.cpp](https://github.com/ggml-org/llama.cpp): MIT. [Qwen](https://huggingface.co/Qwen): confira a licença do modelo específico e do artefato GGUF usado. [cloudflared](https://github.com/cloudflare/cloudflared): Apache-2.0. Os componentes mantêm suas licenças próprias; consulte `THIRD_PARTY_NOTICES.md`.
