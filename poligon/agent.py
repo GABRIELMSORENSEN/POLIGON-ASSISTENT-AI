@@ -16,7 +16,12 @@ def run(ident):
         for step in range(16):
             current=state.task(ident)
             if current['cancel'] or STOP.is_set():state.update(ident,status='cancelled');return
-            response=providers.chat(messages,tools.SCHEMAS) if state.get('online_provider','local')!='local' else engine.chat(messages,tools.SCHEMAS)
+            selected=state.get("online_provider","local")
+            if selected=="auto":
+                response=providers.auto_chat(messages,tools.SCHEMAS)
+                if response is None:response=engine.chat(messages,tools.SCHEMAS)
+            elif selected!="local":response=providers.chat(messages,tools.SCHEMAS)
+            else:response=engine.chat(messages,tools.SCHEMAS)
             calls=response.get('tool_calls') or []
             clean={'role':'assistant','content':response.get('content') or ''}
             if calls:clean['tool_calls']=calls
