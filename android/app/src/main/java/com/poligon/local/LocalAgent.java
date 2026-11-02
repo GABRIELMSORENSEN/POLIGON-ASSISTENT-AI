@@ -32,7 +32,15 @@ public class LocalAgent {
  HttpURLConnection c=(HttpURLConnection)new URL(address).openConnection();c.setConnectTimeout(20000);c.setReadTimeout(240000);c.setInstanceFollowRedirects(false);c.setRequestMethod(method);if(!token.isEmpty())c.setRequestProperty("Authorization","Bearer "+token);c.setRequestProperty("Content-Type","application/json");try{if(body!=null&&!method.equals("GET")){c.setDoOutput(true);try(OutputStream out=c.getOutputStream()){out.write(body.toString().getBytes(StandardCharsets.UTF_8));}}int code=c.getResponseCode();InputStream stream=code>=400?c.getErrorStream():c.getInputStream();String text=stream==null?"":new String(stream.readAllBytes(),StandardCharsets.UTF_8);if(stream!=null)stream.close();if(code>=300){String message=text;try{message=new JSONObject(text).optString("detail",text);}catch(Exception ignored){}throw new IOException("Conexão ("+code+"): "+message.substring(0,Math.min(message.length(),500)));}return new JSONTokener(text).nextValue();}finally{c.disconnect();}
  }
 
- private String providerKey(String id){return prefs.getString("api_"+id,"");}
+
+ private javax.crypto.SecretKey vaultKey()throws Exception{
+  java.security.KeyStore ks=java.security.KeyStore.getInstance("AndroidKeyStore");ks.load(null);String alias="poligon_api_vault_v1";
+  if(!ks.containsAlias(alias)){javax.crypto.KeyGenerator gen=javax.crypto.KeyGenerator.getInstance("AES","AndroidKeyStore");android.security.keystore.KeyGenParameterSpec spec=new android.security.keystore.KeyGenParameterSpec.Builder(alias,android.security.keystore.KeyProperties.PURPOSE_ENCRYPT|android.security.keystore.KeyProperties.PURPOSE_DECRYPT).setBlockModes(android.security.keystore.KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE).build();gen.init(spec);gen.generateKey();}
+  return (javax.crypto.SecretKey)ks.getKey(alias,null);
+ }
+ private void saveProviderKey(String id,String key)throws Exception{javax.crypto.Cipher cipher=javax.crypto.Cipher.getInstance("AES/GCM/NoPadding");cipher.init(javax.crypto.Cipher.ENCRYPT_MODE,vaultKey());String value=android.util.Base64.encodeToString(cipher.getIV(),2)+":"+android.util.Base64.encodeToString(cipher.doFinal(key.getBytes(StandardCharsets.UTF_8)),2);prefs.edit().putString("api_"+id,value).apply();}
+ private String providerKey(String id)throws Exception{String value=prefs.getString("api_"+id,"");if(value.isEmpty())return "";String[] p=value.split(":",2);javax.crypto.Cipher cipher=javax.crypto.Cipher.getInstance("AES/GCM/NoPadding");cipher.init(javax.crypto.Cipher.DECRYPT_MODE,vaultKey(),new javax.crypto.spec.GCMParameterSpec(128,android.util.Base64.decode(p[0],2)));return new String(cipher.doFinal(android.util.Base64.decode(p[1],2)),StandardCharsets.UTF_8);}
+
  private JSONObject providerRoute(String path,String method,JSONObject body)throws Exception{
   String[] ids={"openai","openrouter","deepseek","xai","mistral","cerebras","gemini"};
   String[] names={"OpenAI API","OpenRouter","DeepSeek API","xAI / Grok API","Mistral API","Cerebras Inference","Google Gemini API"};
@@ -40,7 +48,7 @@ public class LocalAgent {
   if(path.equals("/providers/local")&&method.equals("POST")){prefs.edit().putString("online_provider","local").putString("online_model","").apply();return obj("ok",true);}
   if(path.equals("/providers/auto")&&method.equals("POST")){prefs.edit().putString("online_provider","auto").putString("online_model","").apply();return obj("ok",true);}
   String[] parts=path.split("/");if(parts.length>=3){String id=parts[2];if(!Arrays.asList(ids).contains(id))throw new IOException("Provedor inválido.");
-   if(parts.length==4&&parts[3].equals("connect")&&method.equals("POST")){String key=body.getString("api_key").trim();if(key.length()<12||key.length()>512)throw new IOException("Chave inválida.");prefs.edit().putString("api_"+id,key).apply();return new JSONObject().put("connected",true).put("provider",id).put("models",providerModels(id));}
+   if(parts.length==4&&parts[3].equals("connect")&&method.equals("POST")){String key=body.getString("api_key").trim();if(key.length()<12||key.length()>512)throw new IOException("Chave inválida.");saveProviderKey(id,key);return new JSONObject().put("connected",true).put("provider",id).put("models",providerModels(id));}
    if(parts.length==4&&parts[3].equals("models"))return new JSONObject().put("models",providerModels(id));
    if(parts.length==4&&parts[3].equals("connect")&&method.equals("DELETE")){prefs.edit().remove("api_"+id).apply();if(prefs.getString("online_provider","local").equals(id))prefs.edit().putString("online_provider","local").putString("online_model","").apply();return obj("ok",true);}
   }
