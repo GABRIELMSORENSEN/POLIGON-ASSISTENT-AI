@@ -65,6 +65,7 @@
     if(p.connected){try{const r=await api("/providers/"+p.id+"/models");optionList(p.id,r.models||[],overview.active_provider===p.id?{provider:p.id,model:overview.active_model}:null)}catch(e){message(e.message,true)}}
    }
    if(overview.active_provider==="local")message("IA offline ativa. Conecte um provedor e selecione um modelo para usar IA online.");
+   else if(overview.active_provider==="auto")message("Modo automático ativo: tenta OpenRouter gratuito, depois Gemini gratuito; se não houver conexão configurada, usa a IA local. Nunca seleciona um provedor pago automaticamente.");
    else message("Modelo online selecionado: "+overview.active_provider+" · "+overview.active_model);
   }catch(e){root.replaceChildren(el("p","Não foi possível carregar os provedores: "+e.message,"empty"));message(e.message,true)}
  }
@@ -73,6 +74,11 @@
   const [provider,...rest]=value.split("|"),model=rest.join("|");
   const b=$("online-select");b.disabled=true;
   try{await api("/providers/select","POST",{provider,model});message("Modelo ativo: "+names[provider]+" · "+model+". Novas tarefas usarão este provedor.");const badge=document.getElementById("engine-badge");if(badge)badge.textContent="● IA online · "+provider;}
+  catch(e){message(e.message,true)}finally{b.disabled=false}
+ });
+ $("online-auto")?.addEventListener("click",async()=>{
+  const b=$("online-auto");b.disabled=true;
+  try{await api("/providers/auto","POST");message("Automático ativo: OpenRouter gratuito → Gemini gratuito → IA local offline. Nenhum provedor pago será escolhido automaticamente.");const badge=document.getElementById("engine-badge");if(badge)badge.textContent="✦ IA automática · grátis primeiro";}
   catch(e){message(e.message,true)}finally{b.disabled=false}
  });
  $("online-local")?.addEventListener("click",async()=>{
