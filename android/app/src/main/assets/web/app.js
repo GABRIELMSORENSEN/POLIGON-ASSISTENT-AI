@@ -55,7 +55,8 @@ async function loadModelCatalog(){
   const h=catalog.hardware_profile||{};
   $('model-catalog-notice').replaceChildren(
    node('b','Seu PC: '+(h.cpu||'CPU não identificada')+' · '+(h.ram_gb||'?')+' GB RAM · '+(h.gpu||'GPU não identificada')+' · '+(h.vram_gb||'?')+' GB VRAM'),
-   node('p',h.recommendation||'Compatibilidade será verificada ao instalar cada modelo.')
+   node('p',h.recommendation||'Compatibilidade será verificada ao instalar cada modelo.'),
+   node('p',catalog.resource_note||'Consumo de memória varia conforme contexto e runtime.')
   );
   root.replaceChildren();
   const labels={configured_manifest:'Previsto no instalador atual',partially_available:'Parcialmente disponível',catalog_only:'Catálogo — integração pendente',provider_pending:'Provedor — descoberta ao conectar',candidate:'Candidato — precisa validar'};
