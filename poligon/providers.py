@@ -17,7 +17,7 @@ PROVIDERS = {
         "name": "Google Gemini API",
         "base": "https://generativelanguage.googleapis.com/v1beta",
         "docs": "https://ai.google.dev/gemini-api/docs",
-        "free": "Plano gratuito com limites por modelo/região; confirme a cota no AI Studio."
+        "free": "O seletor permite apenas gemini-3.8-flash, gemini-3.6-flash e gemini-3.5-flash-lite conforme a tabela gratuita consultada em 2026-11-02. No plano gratuito, conteúdo pode ser usado para melhorar produtos Google; confirme cotas e política no AI Studio."
     },
     "openrouter": {
         "name": "OpenRouter",
