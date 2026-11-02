@@ -120,17 +120,17 @@
       "id": "openai",
       "name": "OpenAI API",
       "mode": "online",
-      "status": "provider_pending",
-      "description": "Acesso por API e cobrança separada por uso. Uma assinatura ChatGPT não fornece automaticamente créditos de API.",
+      "status": "partially_available",
+      "description": "Integração OpenAI API ativa. Modelos são descobertos em tempo real; cobrança de API é separada da assinatura ChatGPT.",
       "docs": "https://platform.openai.com/docs",
       "models": []
     },
     {
-      "id": "google",
+      "id": "gemini",
       "name": "Google Gemini API",
       "mode": "online",
-      "status": "provider_pending",
-      "description": "Integração Gemini por API key; modelos descobertos no endpoint oficial e cotas gratuitas dependem do modelo e da região.",
+      "status": "partially_available",
+      "description": "Integração por API key ativa. O seletor online restringe o Gemini a modelos gratuitos permitidos e descobre sua disponibilidade em tempo real.",
       "docs": "https://ai.google.dev/gemini-api/docs/models",
       "models": []
     },
@@ -138,8 +138,8 @@
       "id": "deepseek",
       "name": "DeepSeek API",
       "mode": "online",
-      "status": "provider_pending",
-      "description": "Opção para programação, raciocínio e tarefas de agente. O endpoint de modelos permite consultar disponibilidade e metadados.",
+      "status": "partially_available",
+      "description": "Integração por API ativa. Modelos e metadados são descobertos em tempo real; API comercial por uso.",
       "docs": "https://api-docs.deepseek.com/",
       "models": []
     },
@@ -147,8 +147,8 @@
       "id": "mistral",
       "name": "Mistral API",
       "mode": "online",
-      "status": "provider_pending",
-      "description": "Modelos gerais e de código; também oferece modelos locais open-weight.",
+      "status": "partially_available",
+      "description": "Integração por API ativa. Modelos gerais e de código são descobertos em tempo real; confira preços antes de usar.",
       "docs": "https://docs.mistral.ai/models",
       "models": []
     },
@@ -156,8 +156,8 @@
       "id": "xai",
       "name": "xAI / Grok",
       "mode": "online",
-      "status": "provider_pending",
-      "description": "Integração Grok ainda pendente; não exibir modelos fictícios.",
+      "status": "partially_available",
+      "description": "Integração Grok por API ativa. Modelos são descobertos em tempo real; API comercial por uso.",
       "docs": "https://docs.x.ai/",
       "models": []
     },
@@ -165,8 +165,8 @@
       "id": "openrouter",
       "name": "OpenRouter",
       "mode": "online",
-      "status": "provider_pending",
-      "description": "Modelos gratuitos descobertos em tempo real. O aplicativo restringe a lista às variantes :free e ao roteador openrouter/free.",
+      "status": "partially_available",
+      "description": "Integração ativa. Descobre modelos gratuitos em tempo real e restringe a lista a variantes :free e ao roteador openrouter/free.",
       "docs": "https://openrouter.ai/docs",
       "models": []
     },
@@ -174,9 +174,17 @@
       "id": "cerebras",
       "name": "Cerebras Inference",
       "mode": "online",
-      "status": "provider_pending",
-      "description": "Catálogo descoberto dinamicamente. Crédito promocional de avaliação pode expirar e não equivale a plano gratuito permanente.",
+      "status": "partially_available",
+      "description": "Integração ativa com descoberta dinâmica. Crédito promocional de avaliação pode expirar; não equivale a plano gratuito permanente.",
       "docs": "https://inference-docs.cerebras.ai/",
+      "models": []
+    },
+    {
+      "id": "auto",
+      "name": "Roteamento automático gratuito",
+      "mode": "online",
+      "status": "partially_available",
+      "description": "Tenta OpenRouter gratuito, depois Gemini gratuito e, se nenhum estiver conectado, usa o modelo local offline.",
       "models": []
     }
   ]
