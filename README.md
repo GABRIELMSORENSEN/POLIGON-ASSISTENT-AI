@@ -22,7 +22,7 @@ A aba **Modelos** descobre modelos dinamicamente nos endpoints oficiais e permit
 |---|---|---|
 | Google Gemini API | Camada gratuita para modelos elegíveis | O seletor filtra Gemini 3.8 Flash, 3.6 Flash e 3.5 Flash-Lite. No plano gratuito, conteúdo pode ser usado para melhorar produtos Google. |
 | OpenRouter | Variantes gratuitas | O Poligon restringe a seleção a `openrouter/free` e modelos `:free`; disponibilidade e limites mudam. |
-| Cerebras Inference | Crédito promocional de avaliação | Pode exigir método de pagamento e expirar; não é gratuidade permanente. |
+| Cerebras Inference | Crédito promocional de avaliação | A Cerebras anuncia US$ 5 de crédito gratuito inicial ao criar a conta; depois, a API é paga por uso. |
 | DeepSeek API | Pago por uso | Modelos e capacidades consultados dinamicamente. |
 | xAI / Grok API | Pago por uso | Não é incluído em uma assinatura ChatGPT. |
 | Mistral API | Pago por uso | Confira preços e eventuais créditos de avaliação. |
