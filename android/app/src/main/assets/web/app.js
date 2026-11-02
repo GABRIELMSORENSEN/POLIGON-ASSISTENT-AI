@@ -114,7 +114,7 @@ async function loadStudio(){
  if(native){document.querySelector('[data-page="studio"]').hidden=true;return}
  const data=await api('/studio/providers');const root=$('studio-providers');root.replaceChildren();
  (data.providers||[]).forEach(p=>{
-  const card=node('article',undefined,'studio-provider');card.append(node('b',p.name),node('p',p.note),node('span',p.connected?'Conectado':'Não conectado','pill'));
+  const card=node('article',undefined,'studio-provider');card.append(node('b',p.name),node('p',p.note),node('span',p.connected?'Chave salva':'Não conectado','pill'));
   const key=node('input');key.type='password';key.autocomplete='off';key.placeholder='Cole sua chave de API';key.setAttribute('aria-label','Chave de API '+p.name);key.maxLength=512;
   const connect=node('button',p.connected?'Atualizar chave':'Conectar','outline');connect.onclick=()=>action(async()=>{if(!key.value.trim())throw Error('Informe a chave de API.');await api('/studio/providers/'+p.id+'/connect','POST',{api_key:key.value.trim()});key.value='';toast(p.name+' conectado com segurança.');await loadStudio()});
   const disconnect=node('button','Desconectar','text-button');disconnect.hidden=!p.connected;disconnect.onclick=()=>action(async()=>{await api('/studio/providers/'+p.id,'DELETE');toast(p.name+' desconectado.');await loadStudio()});
@@ -131,7 +131,7 @@ $('studio-load-voices').onclick=()=>action(async()=>{
 $('studio-speech-form').onsubmit=e=>{e.preventDefault();action(async()=>{
  const voice=$('studio-voice').value;if(!voice)throw Error('Carregue e selecione uma voz primeiro.');
  $('studio-speech-status').textContent='Gerando áudio…';const result=await api('/studio/speech','POST',{text:$('studio-speech-text').value,voice_id:voice,model_id:$('studio-voice-model').value});
- $('studio-audio').src=result.url;$('studio-audio').hidden=false;$('studio-audio-download').href=result.url;$('studio-audio-download').hidden=false;$('studio-speech-status').textContent='Áudio gerado · '+Math.round(result.bytes/1024)+' KB · '+result.characters+' caracteres.';
+ const audioResponse=await fetch(result.url,{headers:{'X-Poligon-Key':token}});if(!audioResponse.ok)throw Error('Não foi possível carregar o áudio gerado.');const audioBlob=await audioResponse.blob();const audioUrl=URL.createObjectURL(audioBlob);$('studio-audio').src=audioUrl;$('studio-audio').hidden=false;$('studio-audio-download').href=audioUrl;$('studio-audio-download').download=result.file;$('studio-audio-download').hidden=false;$('studio-speech-status').textContent='Áudio gerado · '+Math.round(result.bytes/1024)+' KB · '+result.characters+' caracteres.';
 })};
 $('studio-video-form').onsubmit=e=>{e.preventDefault();action(async()=>{
  $('studio-video-status').textContent='Enviando solicitação ao Runway…';$('studio-video-output').replaceChildren();
