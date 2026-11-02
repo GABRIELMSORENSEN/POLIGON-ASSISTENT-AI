@@ -39,6 +39,18 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertNotIn("additionalProperties", converted["parameters"])
         self.assertNotIn("default", converted["parameters"]["properties"]["x"])
 
+    def test_auto_mode_falls_back_to_local_when_no_free_provider_is_connected(self):
+        with patch.object(providers, "credential", return_value=None):
+            self.assertIsNone(providers.auto_chat([{"role":"user","content":"hello"}]))
+
+    def test_auto_mode_prefers_openrouter_free_router(self):
+        expected = {"role":"assistant","content":"ok"}
+        with patch.object(providers, "credential", side_effect=lambda p: "secret" if p == "openrouter" else None), patch.object(providers, "chat", return_value=expected) as call:
+            result = providers.auto_chat([{"role":"user","content":"hello"}])
+        self.assertEqual(result, expected)
+        self.assertEqual(call.call_args.kwargs["provider_override"], "openrouter")
+        self.assertEqual(call.call_args.kwargs["model_override"], "openrouter/free")
+
     def test_openrouter_only_exposes_free_variants(self):
         response = {"data":[
             {"id":"provider/model:free","name":"Free","pricing":{"prompt":"0","completion":"0"}},
