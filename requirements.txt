@@ -8,3 +8,4 @@ pyperclip>=1.9
 pywebview>=5,<7
 qrcode>=8,<9
 python-multipart>=0.0.20
+keyring>=25,<26
