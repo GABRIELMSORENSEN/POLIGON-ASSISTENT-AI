@@ -5,7 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request, UploadFile, File
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from . import __version__,state,engine,tools,agent,installer,providers
+from . import __version__,state,engine,tools,agent,installer,providers,studio
 
 state.init()
 PAIR={'code':'','expires':0};attempts={};tunnel_process=None;tunnel_url=''
@@ -93,6 +93,62 @@ def provider_disconnect(provider:str,identity=Depends(owner)):
     if state.get('online_provider')==provider:
         state.set('online_provider','local');state.set('online_model','')
     return {'ok':True}
+
+
+class StudioConnect(BaseModel):
+    api_key:str=Field(min_length=12,max_length=512)
+
+@app.get('/api/studio/providers')
+def studio_providers(identity=Depends(owner)):
+    return studio.overview()
+
+@app.post('/api/studio/providers/{provider}/connect')
+def studio_connect(provider:str,body:StudioConnect,identity=Depends(owner)):
+    try:return studio.connect(provider,body.api_key)
+    except Exception as e:raise HTTPException(400,str(e))
+
+@app.delete('/api/studio/providers/{provider}')
+def studio_disconnect(provider:str,identity=Depends(owner)):
+    try:return studio.disconnect(provider)
+    except Exception as e:raise HTTPException(400,str(e))
+
+@app.get('/api/studio/voices')
+def studio_voices(identity=Depends(owner)):
+    try:return {'voices':studio.voices()}
+    except Exception as e:raise HTTPException(400,str(e))
+
+class StudioSpeech(BaseModel):
+    text:str=Field(min_length=1,max_length=10000)
+    voice_id:str=Field(min_length=5,max_length=80)
+    model_id:str='eleven_v4'
+
+@app.post('/api/studio/speech')
+def studio_speech(body:StudioSpeech,identity=Depends(owner)):
+    try:return studio.generate_speech(body.text,body.voice_id,body.model_id)
+    except Exception as e:raise HTTPException(400,str(e))
+
+@app.get('/api/studio/audio/{filename}')
+def studio_audio(filename:str,identity=Depends(owner)):
+    if not re.fullmatch(r'[a-f0-9]{24}\\.mp3',filename):raise HTTPException(404,'Áudio não encontrado')
+    path=studio.OUTPUT_DIR/filename
+    if not path.is_file():raise HTTPException(404,'Áudio não encontrado')
+    return FileResponse(path,media_type='audio/mpeg',filename=filename)
+
+class StudioVideo(BaseModel):
+    prompt:str=Field(min_length=1,max_length=1000)
+    model:str='gen4.5'
+    ratio:str='1280:720'
+    duration:int=5
+
+@app.post('/api/studio/video')
+def studio_video(body:StudioVideo,identity=Depends(owner)):
+    try:return studio.start_video(body.prompt,body.model,body.ratio,body.duration)
+    except Exception as e:raise HTTPException(400,str(e))
+
+@app.get('/api/studio/video/{task_id}')
+def studio_video_status(task_id:str,identity=Depends(owner)):
+    try:return studio.video_task(task_id)
+    except Exception as e:raise HTTPException(400,str(e))
 
 class TaskIn(BaseModel):
     prompt:str=Field(min_length=1,max_length=12000)
