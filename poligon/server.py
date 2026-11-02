@@ -72,7 +72,9 @@ class ProviderSelect(BaseModel):
     model:str
 @app.post('/api/providers/select')
 def provider_select(body:ProviderSelect,identity=Depends(owner)):
-    try:return providers.select(body.provider,body.model)
+    try:
+        engine.stop()
+        return providers.select(body.provider,body.model)
     except Exception as e:raise HTTPException(400,str(e))
 @app.post('/api/providers/local')
 def provider_local(identity=Depends(owner)):
