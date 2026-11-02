@@ -27,7 +27,13 @@
             "vision"
           ],
           "status": "configured_manifest",
-          "hardware": "Recomendado como ponto de partida; já consta no manifesto atual do projeto. Visão depende do projetor multimodal."
+          "hardware": "Recomendado como ponto de partida; já consta no manifesto atual do projeto. Visão depende do projetor multimodal.",
+          "parameters": "4 bilhões",
+          "weights_q4_estimate": "2,74 GB (tamanho real do manifesto)",
+          "ram_estimate": "5–8 GB",
+          "vram_estimate": "4–6 GB",
+          "intelligence_level": "Médio",
+          "focus": "Chat geral, código, ferramentas e visão com projetor multimodal"
         },
         {
           "id": "Qwen3.5-0.8B-Q4_K_M.gguf",
@@ -38,7 +44,13 @@
             "offline"
           ],
           "status": "configured_manifest",
-          "hardware": "Modelo compacto já previsto para Android; não substitui um modelo maior no PC."
+          "hardware": "Modelo compacto já previsto para Android; não substitui um modelo maior no PC.",
+          "parameters": "0,8 bilhão",
+          "weights_q4_estimate": "533 MB (tamanho real do manifesto)",
+          "ram_estimate": "1,2–2 GB",
+          "vram_estimate": "CPU no Android; sem VRAM dedicada",
+          "intelligence_level": "Básico / leve",
+          "focus": "Assistente offline compacto e tarefas simples"
         },
         {
           "id": "Qwen3.5-9B",
@@ -49,7 +61,13 @@
             "reasoning"
           ],
           "status": "candidate",
-          "hardware": "Candidato para teste com quantização; não está no manifesto nem instalado."
+          "hardware": "Candidato para teste com quantização; não está no manifesto nem instalado.",
+          "parameters": "9 bilhões",
+          "weights_q4_estimate": "5–6 GB (estimativa Q4)",
+          "ram_estimate": "8–12 GB",
+          "vram_estimate": "6–8 GB; contexto pode exigir RAM",
+          "intelligence_level": "Alto para modelo local compacto",
+          "focus": "Raciocínio, programação e tarefas gerais"
         },
         {
           "id": "gemma-4-e2b",
@@ -59,7 +77,13 @@
             "multimodal"
           ],
           "status": "candidate",
-          "hardware": "Candidato leve; confirmar artefato, formato e suporte no runtime antes de oferecer download."
+          "hardware": "Candidato leve; confirmar artefato, formato e suporte no runtime antes de oferecer download.",
+          "parameters": "2 bilhões (classe E2B)",
+          "weights_q4_estimate": "1,3–1,8 GB (estimativa Q4)",
+          "ram_estimate": "3–4 GB",
+          "vram_estimate": "2–3 GB",
+          "intelligence_level": "Leve / médio",
+          "focus": "Chat geral e tarefas multimodais"
         },
         {
           "id": "gemma-4-e4b",
@@ -69,7 +93,13 @@
             "multimodal"
           ],
           "status": "candidate",
-          "hardware": "Candidato leve/médio; validar consumo real de RAM e VRAM."
+          "hardware": "Candidato leve/médio; validar consumo real de RAM e VRAM.",
+          "parameters": "4 bilhões (classe E4B)",
+          "weights_q4_estimate": "2,5–3 GB (estimativa Q4)",
+          "ram_estimate": "5–7 GB",
+          "vram_estimate": "3–5 GB",
+          "intelligence_level": "Médio / alto",
+          "focus": "Chat geral, multimodal e raciocínio"
         },
         {
           "id": "phi-4-mini",
@@ -80,7 +110,13 @@
             "coding"
           ],
           "status": "candidate",
-          "hardware": "Candidato compacto; validar formato GGUF e compatibilidade."
+          "hardware": "Candidato compacto; validar formato GGUF e compatibilidade.",
+          "parameters": "3,8 bilhões (classe do modelo)",
+          "weights_q4_estimate": "2,4–2,8 GB (estimativa Q4)",
+          "ram_estimate": "4–6 GB",
+          "vram_estimate": "3–5 GB",
+          "intelligence_level": "Médio / alto",
+          "focus": "Raciocínio compacto, código e instruções"
         },
         {
           "id": "ministral-3-3b",
@@ -90,7 +126,13 @@
             "vision"
           ],
           "status": "candidate",
-          "hardware": "Candidato compacto; validar formato e suporte multimodal."
+          "hardware": "Candidato compacto; validar formato e suporte multimodal.",
+          "parameters": "3 bilhões",
+          "weights_q4_estimate": "1,8–2,2 GB (estimativa Q4)",
+          "ram_estimate": "3–5 GB",
+          "vram_estimate": "2–4 GB",
+          "intelligence_level": "Médio",
+          "focus": "Chat geral e visão"
         },
         {
           "id": "ministral-3-8b",
@@ -101,7 +143,13 @@
             "vision"
           ],
           "status": "candidate",
-          "hardware": "Pode exigir compromisso entre contexto, velocidade e offload."
+          "hardware": "Pode exigir compromisso entre contexto, velocidade e offload.",
+          "parameters": "8 bilhões",
+          "weights_q4_estimate": "4,5–5 GB (estimativa Q4)",
+          "ram_estimate": "7–10 GB",
+          "vram_estimate": "5–8 GB",
+          "intelligence_level": "Alto",
+          "focus": "Chat, código e visão"
         },
         {
           "id": "gpt-oss-20b",
@@ -112,7 +160,13 @@
             "coding"
           ],
           "status": "candidate",
-          "hardware": "Experimento avançado; não assumir que caberá confortavelmente na RX 7600 de 8 GB."
+          "hardware": "Experimento avançado; não assumir que caberá confortavelmente na RX 7600 de 8 GB.",
+          "parameters": "20 bilhões",
+          "weights_q4_estimate": "11–13 GB (estimativa Q4)",
+          "ram_estimate": "16–24 GB",
+          "vram_estimate": "8 GB não comportam o modelo completo; offload para RAM",
+          "intelligence_level": "Alto, mas pesado",
+          "focus": "Raciocínio e uso de ferramentas"
         }
       ]
     },
@@ -187,5 +241,6 @@
       "description": "Tenta OpenRouter gratuito, depois Gemini gratuito e, se nenhum estiver conectado, usa o modelo local offline.",
       "models": []
     }
-  ]
+  ],
+  "resource_note": "Estimativas de Q4 são aproximações, não requisitos garantidos. Memória final depende do contexto, KV cache, runtime, offload e multimodalidade. Somente os tamanhos explicitamente marcados como reais vêm do manifesto atual."
 }
