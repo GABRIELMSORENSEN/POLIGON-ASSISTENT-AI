@@ -229,7 +229,7 @@
       "name": "Cerebras Inference",
       "mode": "online",
       "status": "partially_available",
-      "description": "Integração ativa com descoberta dinâmica. Crédito promocional de avaliação pode expirar; não equivale a plano gratuito permanente.",
+      "description": "Integração ativa com descoberta dinâmica. A Cerebras anuncia US$ 5 de crédito gratuito inicial; depois, a API é paga por uso.",
       "docs": "https://inference-docs.cerebras.ai/",
       "models": []
     },
