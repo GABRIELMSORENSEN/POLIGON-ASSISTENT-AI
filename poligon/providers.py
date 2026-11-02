@@ -29,7 +29,7 @@ PROVIDERS = {
         "name": "Cerebras Inference",
         "base": "https://api.cerebras.ai/v1",
         "docs": "https://inference-docs.cerebras.ai/",
-        "free": "Crédito promocional de avaliação pode exigir cartão e expirar; não é gratuito permanente."
+        "free": "A Cerebras anuncia US$ 5 em crédito gratuito de teste ao criar a conta. É crédito inicial, não uso gratuito recorrente; depois, a API é cobrada por uso."
     },
     "deepseek": {
         "name": "DeepSeek API",
