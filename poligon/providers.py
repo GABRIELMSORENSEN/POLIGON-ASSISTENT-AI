@@ -28,6 +28,30 @@ PROVIDERS = {
         "base": "https://api.cerebras.ai/v1",
         "docs": "https://inference-docs.cerebras.ai/",
         "free": "Crédito promocional de avaliação pode exigir cartão e expirar; não é gratuito permanente."
+    },
+    "deepseek": {
+        "name": "DeepSeek API",
+        "base": "https://api.deepseek.com",
+        "docs": "https://api-docs.deepseek.com/",
+        "free": "API paga por uso. Não há gratuidade permanente garantida; confira preço antes de enviar tarefas."
+    },
+    "xai": {
+        "name": "xAI / Grok API",
+        "base": "https://api.x.ai/v1",
+        "docs": "https://docs.x.ai/",
+        "free": "API comercial. Não é incluída em uma assinatura ChatGPT e não há uso gratuito permanente garantido."
+    },
+    "mistral": {
+        "name": "Mistral API",
+        "base": "https://api.mistral.ai/v1",
+        "docs": "https://docs.mistral.ai/",
+        "free": "API paga conforme modelo e uso; confira preços e eventuais créditos de avaliação."
+    },
+    "openai": {
+        "name": "OpenAI API",
+        "base": "https://api.openai.com/v1",
+        "docs": "https://platform.openai.com/docs",
+        "free": "API paga por uso. A assinatura ChatGPT não inclui créditos de API."
     }
 }
 
@@ -232,7 +256,7 @@ def chat(messages, tools=None, max_tokens=1024):
     key = credential(provider)
     if not key:
         raise RuntimeError("A chave do provedor não está mais disponível. Reconecte na aba Modelos.")
-    if provider in ("openrouter", "cerebras"):
+    if provider in ("openrouter", "cerebras", "deepseek", "xai", "mistral", "openai"):
         body = {
             "model": model,
             "messages": _openai_messages(messages),
