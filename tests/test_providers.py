@@ -55,12 +55,13 @@ class ProviderAdapterTests(unittest.TestCase):
 
     def test_gemini_model_catalog_uses_live_supported_generation_methods(self):
         response = {"models":[
-            {"name":"models/gemini-live","displayName":"Gemini Live","supportedGenerationMethods":["generateContent"]},
+            {"name":"models/gemini-3.8-flash","displayName":"Gemini 3.8 Flash","supportedGenerationMethods":["generateContent"]},
+            {"name":"models/gemini-4-argon","displayName":"Gemini 4 Argon","supportedGenerationMethods":["generateContent"]},
             {"name":"models/gemini-embed","supportedGenerationMethods":["embedContent"]}
         ]}
         with patch.object(providers, "credential", return_value="secret"), patch.object(providers, "_request", return_value=response):
             models = providers.list_models("gemini")
-        self.assertEqual([item["id"] for item in models], ["gemini-live"])
+        self.assertEqual([item["id"] for item in models], ["gemini-3.8-flash"])
 
 if __name__ == "__main__":
     unittest.main()
