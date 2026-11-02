@@ -130,6 +130,14 @@ def screen(identity=Depends(who)):
 
 @app.get('/api/memories')
 def memories(identity=Depends(who)):return state.rows('SELECT * FROM memories ORDER BY created DESC')
+class MemoryIn(BaseModel):
+    text:str=Field(min_length=1,max_length=2000)
+@app.post('/api/memories')
+def add_memory(body:MemoryIn,identity=Depends(who)):
+    ident=secrets.token_hex(8);text_value=body.text.strip()
+    if not text_value:raise HTTPException(400,'Memória vazia')
+    state.execute('INSERT INTO memories VALUES (?,?,?)',(ident,text_value,time.time()))
+    return {'id':ident,'text':text_value,'created':time.time()}
 @app.delete('/api/memories/{ident}')
 def delete_memory(ident:str,identity=Depends(who)):
     state.execute('DELETE FROM memories WHERE id=?',(ident,));return {'ok':True}
