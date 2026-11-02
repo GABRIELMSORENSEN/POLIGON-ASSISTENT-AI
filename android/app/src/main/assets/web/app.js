@@ -3,6 +3,7 @@ const $=id=>document.getElementById(id), native=typeof Android!=="undefined", ca
 let seq=0,token=localStorage.getItem('poligon-token')||'',target=native?'local':'pc',active=null,lastTask='',status={},screenSize=null,polling=false;
 const fragment=new URLSearchParams(location.hash.slice(1));if(fragment.has('token')){token=fragment.get('token');localStorage.setItem('poligon-token',token);history.replaceState(null,'',location.pathname)}
 function bridge(path,method='GET',body){return new Promise((resolve,reject)=>{const id=String(++seq);callbacks.set(id,{resolve,reject});Android.request(id,JSON.stringify({path,method,body:body||null,target}));setTimeout(()=>{if(callbacks.has(id)){callbacks.delete(id);reject(Error('O dispositivo demorou para responder.'))}},300000)})}
+window.poligonBridge=bridge;
 window.nativeResult=(id,result)=>{const c=callbacks.get(id);if(!c)return;callbacks.delete(id);result.error?c.reject(Error(result.error)):c.resolve(result.data)};
 async function api(path,method='GET',body){if(native)return bridge(path,method,body);const r=await fetch('/api'+path,{method,headers:{'X-Poligon-Key':token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});let data=await r.json().catch(()=>({detail:'Resposta inválida do servidor'}));if(!r.ok)throw Error(data.detail||'Falha na conexão');return data}
 function toast(text){$('toast').textContent=text;$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',6500)}
