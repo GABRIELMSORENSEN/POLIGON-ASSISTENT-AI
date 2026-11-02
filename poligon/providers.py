@@ -182,9 +182,16 @@ def _openai_messages(messages):
             out.append({"role": "tool", "tool_call_id": msg.get("tool_call_id"), "content": msg.get("content", "")})
     return out
 
+def _clean_gemini_schema(value):
+    if isinstance(value, list):
+        return [_clean_gemini_schema(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _clean_gemini_schema(item) for key, item in value.items() if key not in {"additionalProperties", "default", "$schema"}}
+    return value
+
 def _gemini_schema(schema):
     fn = schema["function"]
-    params = fn.get("parameters") or {"type": "object", "properties": {}}
+    params = _clean_gemini_schema(fn.get("parameters") or {"type": "object", "properties": {}})
     return {"name": fn["name"], "description": fn.get("description", ""), "parameters": params}
 
 def _gemini_messages(messages):
