@@ -48,7 +48,8 @@ public class LocalAgent {
  throw new IOException("Ferramenta desconhecida: "+name);
  }
  private JSONArray memoryContext(){
-  JSONArray local=array("memories");
+  JSONArray local;
+  try{local=array("memories");}catch(JSONException e){return new JSONArray();}
   try{
    Object value=remote("/memories","GET",null);
    if(value instanceof JSONArray){
