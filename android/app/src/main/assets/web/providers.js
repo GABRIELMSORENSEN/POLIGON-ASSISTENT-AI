@@ -3,7 +3,7 @@
  const $=id=>document.getElementById(id);
  const token=()=>localStorage.getItem("poligon-token")||"";
  const native=typeof Android!=="undefined";
- const names={gemini:"Google Gemini API",openrouter:"OpenRouter",cerebras:"Cerebras Inference"};
+ const names={gemini:"Google Gemini API",openrouter:"OpenRouter",cerebras:"Cerebras Inference",deepseek:"DeepSeek API",xai:"xAI / Grok API",mistral:"Mistral API",openai:"OpenAI API"};
  const notes={
   gemini:"Tem camada gratuita com limites por modelo e região. Confira a cota e a política de dados no Google AI Studio.",
   openrouter:"Use apenas variantes :free ou o roteador openrouter/free. O limite gratuito atual pode ser 20 req/min e 50 req/dia; pode mudar.",
@@ -11,6 +11,7 @@
  };
  let models=[];
  async function api(path,method="GET",body){
+  if(native){if(typeof window.poligonBridge!=="function")throw Error("Ponte Android indisponível. Atualize o aplicativo.");return window.poligonBridge(path,method,body)}
   const r=await fetch("/api"+path,{method,headers:{"X-Poligon-Key":token(),...(body?{"Content-Type":"application/json"}:{})},body:body?JSON.stringify(body):undefined});
   const data=await r.json().catch(()=>({detail:"Resposta inválida"}));
   if(!r.ok)throw Error(data.detail||"Falha na conexão");
@@ -40,7 +41,8 @@
  }
  async function load(){
   const root=$("provider-cards");if(!root)return;
-  if(native){root.replaceChildren(el("p","Conecte os provedores na versão Windows do Poligon. Depois, escolha IA do PC no seletor do chat do celular para usar o modelo online configurado.","empty"));return}
+  if(native&&typeof window.poligonBridge!=="function"){root.replaceChildren(el("p","Atualize o aplicativo para configurar provedores pelo PC pareado.","empty"));return}
+  if(native&&document.getElementById("target")?.value!=="pc"){root.replaceChildren(el("p","Para conectar GPT, Gemini e outros modelos, primeiro pareie o celular com o POLIGON no PC na aba Meu computador. Depois selecione “IA do PC” no topo desta tela. As chaves ficam protegidas no computador.","empty"));return}
   try{
    const overview=await api("/providers");root.replaceChildren();models=[];
    for(const p of overview.providers||[]){
