@@ -24,12 +24,12 @@
   renderSelect(selected);
  }
  function renderSelect(selected){
-  const s=$("online-model");s.replaceChildren();
+  const s=$("online-model"),previous=selected?selected.provider+"|"+selected.model:s.value;s.replaceChildren();
   if(!models.length){s.append(el("option","Conecte um provedor primeiro"));s.disabled=true;$("online-select").disabled=true;return}
   models.sort((a,b)=>a.provider.localeCompare(b.provider)||a.name.localeCompare(b.name));
   for(const m of models){const o=el("option",names[m.provider]+" · "+m.name);o.value=m.provider+"|"+m.id;s.append(o)}
   s.disabled=false;$("online-select").disabled=false;
-  if(selected){const v=selected.provider+"|"+selected.model;if([...s.options].some(o=>o.value===v))s.value=v}
+  if(previous&&[...s.options].some(o=>o.value===previous))s.value=previous
  }
  async function fetchModels(provider,card){
   const button=card.querySelector("[data-refresh]");
