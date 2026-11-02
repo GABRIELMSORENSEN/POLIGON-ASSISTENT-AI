@@ -7,6 +7,28 @@ window.nativeResult=(id,result)=>{const c=callbacks.get(id);if(!c)return;callbac
 async function api(path,method='GET',body){if(native)return bridge(path,method,body);const r=await fetch('/api'+path,{method,headers:{'X-Poligon-Key':token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});let data=await r.json().catch(()=>({detail:'Resposta inválida do servidor'}));if(!r.ok)throw Error(data.detail||'Falha na conexão');return data}
 function toast(text){$('toast').textContent=text;$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',6500)}
 function node(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
+let recognition=null,dictating=false;
+function stopDictation(){if(recognition){try{recognition.stop()}catch(_){}}dictating=false;$('dictate').textContent='🎙 Ditar';$('dictate').setAttribute('aria-pressed','false')}
+$('dictate').onclick=()=>{
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SpeechRecognition){toast('Ditado por voz não está disponível neste navegador. Você ainda pode usar o teclado ou o microfone do sistema.');return}
+ if(dictating){stopDictation();return}
+ recognition=new SpeechRecognition();recognition.lang='pt-BR';recognition.interimResults=true;recognition.continuous=false;
+ recognition.onstart=()=>{dictating=true;$('dictate').textContent='■ Parar ditado';$('dictate').setAttribute('aria-pressed','true')};
+ recognition.onresult=e=>{let finalText='';for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)finalText+=e.results[i][0].transcript+' ';if(finalText){const box=$('prompt');box.value+=(box.value.trim()?' ':'')+finalText.trim();box.dispatchEvent(new Event('input'));}};
+ recognition.onerror=e=>{stopDictation();if(e.error!=='aborted')toast('Falha no ditado por voz: '+e.error)};
+ recognition.onend=()=>{dictating=false;$('dictate').textContent='🎙 Ditar';$('dictate').setAttribute('aria-pressed','false')};
+ try{recognition.start()}catch(e){stopDictation();toast('Não foi possível iniciar o microfone: '+e.message)}
+};
+$('speak-answer').onclick=()=>{
+ if(!('speechSynthesis' in window)){toast('Leitura em voz alta não está disponível neste dispositivo.');return}
+ if(window.speechSynthesis.speaking){window.speechSynthesis.cancel();$('speak-answer').textContent='▶ Ouvir resposta';return}
+ const text=$('answer').textContent.trim();if(!text){toast('Ainda não há resposta para ouvir.');return}
+ const utterance=new SpeechSynthesisUtterance(text);utterance.lang='pt-BR';utterance.rate=1;
+ utterance.onend=()=>{$('speak-answer').textContent='▶ Ouvir resposta'};
+ utterance.onerror=()=>{$('speak-answer').textContent='▶ Ouvir resposta';toast('Não foi possível reproduzir a resposta.')};
+ $('speak-answer').textContent='■ Parar áudio';window.speechSynthesis.cancel();window.speechSynthesis.speak(utterance);
+};
 async function action(fn){try{await fn()}catch(e){toast(e.message)}}
 function page(name){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+name));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.page===name));$('page-title').textContent={assistant:'Assistente',models:'Modelos',remote:'Meu computador',memory:'Memória',schedule:'Agendamentos',settings:'Configurações'}[name];if(name==='models')action(loadModelCatalog);if(name==='memory')action(loadMemories);if(name==='schedule')action(loadSchedules);if(name==='remote')action(loadDevices)}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>page(b.dataset.page));document.querySelectorAll('[data-prompt]').forEach(b=>b.onclick=()=>{$('prompt').value=b.dataset.prompt;$('prompt').focus()});
