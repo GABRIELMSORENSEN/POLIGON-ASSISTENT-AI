@@ -78,6 +78,9 @@ async function loadModelCatalog(){
     top.append(name,node('span',labels[model.status]||model.status,'model-status'));
     row.append(top);
     if(model.tasks&&model.tasks.length)row.append(node('div',model.tasks.join(' · '),'model-tags'));
+    const specs=[model.parameters,model.intelligence_level,model.weights_q4_estimate,model.ram_estimate,model.vram_estimate].filter(Boolean);
+    if(specs.length)row.append(node('div',specs.join(' · '),'model-specs'));
+    if(model.focus)row.append(node('p','Foco: '+model.focus));
     if(model.hardware)row.append(node('p',model.hardware));
     if(model.cost)row.append(node('small',model.cost,'model-cost'));
     section.append(row);
