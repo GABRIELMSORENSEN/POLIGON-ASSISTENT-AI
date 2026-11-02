@@ -130,7 +130,9 @@ def list_models(provider):
         for item in data.get("data", []):
             ident = item.get("id", "")
             pricing = item.get("pricing") or {}
-            if ident.endswith(":free") and str(pricing.get("prompt", "0")) == "0" and str(pricing.get("completion", "0")) == "0":
+            params = set(item.get("supported_parameters") or [])
+            tool_capable = not params or "tools" in params
+            if ident.endswith(":free") and tool_capable and str(pricing.get("prompt", "0")) == "0" and str(pricing.get("completion", "0")) == "0":
                 result.append({
                     "id": ident,
                     "name": item.get("name", ident),
@@ -268,6 +270,8 @@ def chat(messages, tools=None, max_tokens=1024):
         if tools:
             body["tools"] = tools
             body["tool_choice"] = "auto"
+        if provider == "deepseek":
+            body["thinking"] = {"type": "disabled"}
         data = _request(provider, "POST", "/chat/completions", key, json=body)
         message = data["choices"][0]["message"]
         return message
