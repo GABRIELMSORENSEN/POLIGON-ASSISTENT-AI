@@ -1,0 +1,112 @@
+name: POLIGON desktop and Android builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish a GitHub Release after both builds succeed
+        required: true
+        type: boolean
+        default: false
+      release_tag:
+        description: Release tag (used only when publishing)
+        required: false
+        default: nightly
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python dependencies and packager
+        run: python -m pip install -r requirements.txt pyinstaller
+      - name: Download and verify pinned llama.cpp Vulkan runtime
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/llama-windows | Out-Null
+          $manifest = Get-Content models-manifest.json | ConvertFrom-Json
+          $url = $manifest.runtime.url
+          Invoke-WebRequest -Uri $url -OutFile runtime/llama-runtime.zip
+          $actual = (Get-FileHash runtime/llama-runtime.zip -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne $manifest.runtime.sha256) { throw "llama.cpp runtime SHA-256 mismatch" }
+          Expand-Archive -Path runtime/llama-runtime.zip -DestinationPath runtime/llama-windows -Force
+          $server = Get-ChildItem runtime/llama-windows -Filter llama-server.exe -Recurse | Select-Object -First 1
+          if (-not $server) { throw "llama-server.exe missing from official archive" }
+          if ($server.DirectoryName -ne (Resolve-Path runtime/llama-windows).Path) {
+            Get-ChildItem $server.DirectoryName | ForEach-Object { Move-Item $_.FullName runtime/llama-windows -Force }
+          }
+          Remove-Item runtime/llama-runtime.zip -Force
+      - name: Download Cloudflare tunnel client
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe -OutFile runtime/cloudflared.exe
+      - name: Build Windows portable app
+        run: python scripts/build_windows.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: POLIGON-Windows-x64
+          path: release/POLIGON-2.0.0-Windows-x64.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK and NDK
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "ndk;28.2.13676358" "cmake;3.31.0"
+      - name: Build pinned llama.cpp Android server
+        env:
+          LLAMA_COMMIT: 930e2fa5995789efbf249a8bf61325bb626e417b
+        run: |
+          git clone https://github.com/ggml-org/llama.cpp.git llama-src
+          cd llama-src
+          git checkout "$LLAMA_COMMIT"
+          cmake -S . -B build-android -DCMAKE_TOOLCHAIN_FILE="$ANDROID_HOME/ndk/28.2.13676358/build/cmake/android.toolchain.cmake" -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-28 -DANDROID_STL=c++_static -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DGGML_OPENMP=OFF -DGGML_LLAMAFILE=OFF -DGGML_VULKAN=OFF -DLLAMA_OPENSSL=OFF -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_SERVER=ON
+          cmake --build build-android --target llama-server --parallel 2
+          mkdir -p ../android/app/src/main/jniLibs/arm64-v8a
+          cp build-android/bin/llama-server ../android/app/src/main/jniLibs/arm64-v8a/libpoligon_llama.so
+      - name: Build Android APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: POLIGON-Android-arm64
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+    needs: [windows, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.release_tag }}
+          target_commitish: ${{ github.sha }}
+          name: POLIGON ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.release_tag }}
+          prerelease: ${{ github.event_name == 'workflow_dispatch' }}
+          generate_release_notes: true
+          files: release-assets/*
