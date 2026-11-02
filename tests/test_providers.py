@@ -51,6 +51,10 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertEqual(call.call_args.kwargs["provider_override"], "openrouter")
         self.assertEqual(call.call_args.kwargs["model_override"], "openrouter/free")
 
+    def test_auto_mode_falls_back_when_free_provider_is_unavailable(self):
+        with patch.object(providers, "credential", side_effect=lambda p: "secret" if p == "openrouter" else None), patch.object(providers, "chat", side_effect=RuntimeError("rate limit")):
+            self.assertIsNone(providers.auto_chat([{"role":"user","content":"hello"}]))
+
     def test_openrouter_only_exposes_free_variants(self):
         response = {"data":[
             {"id":"provider/model:free","name":"Free","pricing":{"prompt":"0","completion":"0"}},
