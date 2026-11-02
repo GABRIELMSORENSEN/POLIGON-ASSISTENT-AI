@@ -41,8 +41,7 @@
  }
  async function load(){
   const root=$("provider-cards");if(!root)return;
-  if(native&&typeof window.poligonBridge!=="function"){root.replaceChildren(el("p","Atualize o aplicativo para configurar provedores pelo PC pareado.","empty"));return}
-  if(native&&document.getElementById("target")?.value!=="pc"){root.replaceChildren(el("p","Para conectar GPT, Gemini e outros modelos, primeiro pareie o celular com o POLIGON no PC na aba Meu computador. Depois selecione “IA do PC” no topo desta tela. As chaves ficam protegidas no computador.","empty"));return}
+  // Android mantém provedores e credenciais próprios; pareamento com PC é opcional.
   try{
    const overview=await api("/providers");root.replaceChildren();models=[];
    for(const p of overview.providers||[]){
