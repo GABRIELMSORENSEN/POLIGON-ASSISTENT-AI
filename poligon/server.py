@@ -129,7 +129,7 @@ def studio_speech(body:StudioSpeech,identity=Depends(owner)):
 
 @app.get('/api/studio/audio/{filename}')
 def studio_audio(filename:str,identity=Depends(owner)):
-    if not re.fullmatch(r'[a-f0-9]{24}\\.mp3',filename):raise HTTPException(404,'Áudio não encontrado')
+    if not re.fullmatch(r'[a-f0-9]{24}\.mp3',filename):raise HTTPException(404,'Áudio não encontrado')
     path=studio.OUTPUT_DIR/filename
     if not path.is_file():raise HTTPException(404,'Áudio não encontrado')
     return FileResponse(path,media_type='audio/mpeg',filename=filename)
