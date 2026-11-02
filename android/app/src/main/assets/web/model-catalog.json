@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-11-02",
+  "notice": "Catálogo local inicial e catálogo online dinâmico. Provedores conectados consultam seus modelos reais; os modelos online não conectados permanecem como pendentes. Não há IDs de modelo inventados.",
+  "hardware_profile": {
+    "cpu": "AMD Ryzen 7 5700G",
+    "ram_gb": 24,
+    "gpu": "AMD Radeon RX 7600",
+    "vram_gb": 8,
+    "recommendation": "Priorizar modelos locais quantizados de aproximadamente 2B–8B. Modelos maiores podem exigir offload para RAM, reduzir contexto ou ficar lentos. A compatibilidade Vulkan/ROCm precisa ser validada no equipamento."
+  },
+  "providers": [
+    {
+      "id": "local",
+      "name": "Modelos locais",
+      "mode": "offline",
+      "status": "partially_available",
+      "description": "Executados no próprio PC, sem enviar prompts ao provedor. A instalação e o desempenho dependem do hardware.",
+      "models": [
+        {
+          "id": "Qwen3.5-4B-Q4_K_M.gguf",
+          "name": "Qwen 3.5 4B Q4_K_M",
+          "tasks": [
+            "chat",
+            "portuguese",
+            "tools",
+            "vision"
+          ],
+          "status": "configured_manifest",
+          "hardware": "Recomendado como ponto de partida; já consta no manifesto atual do projeto. Visão depende do projetor multimodal."
+        },
+        {
+          "id": "Qwen3.5-0.8B-Q4_K_M.gguf",
+          "name": "Qwen 3.5 0.8B Q4_K_M",
+          "tasks": [
+            "mobile",
+            "chat",
+            "offline"
+          ],
+          "status": "configured_manifest",
+          "hardware": "Modelo compacto já previsto para Android; não substitui um modelo maior no PC."
+        },
+        {
+          "id": "Qwen3.5-9B",
+          "name": "Qwen 3.5 9B",
+          "tasks": [
+            "chat",
+            "coding",
+            "reasoning"
+          ],
+          "status": "candidate",
+          "hardware": "Candidato para teste com quantização; não está no manifesto nem instalado."
+        },
+        {
+          "id": "gemma-4-e2b",
+          "name": "Gemma 4 E2B",
+          "tasks": [
+            "chat",
+            "multimodal"
+          ],
+          "status": "candidate",
+          "hardware": "Candidato leve; confirmar artefato, formato e suporte no runtime antes de oferecer download."
+        },
+        {
+          "id": "gemma-4-e4b",
+          "name": "Gemma 4 E4B",
+          "tasks": [
+            "chat",
+            "multimodal"
+          ],
+          "status": "candidate",
+          "hardware": "Candidato leve/médio; validar consumo real de RAM e VRAM."
+        },
+        {
+          "id": "phi-4-mini",
+          "name": "Phi-4-mini",
+          "tasks": [
+            "chat",
+            "reasoning",
+            "coding"
+          ],
+          "status": "candidate",
+          "hardware": "Candidato compacto; validar formato GGUF e compatibilidade."
+        },
+        {
+          "id": "ministral-3-3b",
+          "name": "Ministral 3 3B",
+          "tasks": [
+            "chat",
+            "vision"
+          ],
+          "status": "candidate",
+          "hardware": "Candidato compacto; validar formato e suporte multimodal."
+        },
+        {
+          "id": "ministral-3-8b",
+          "name": "Ministral 3 8B",
+          "tasks": [
+            "chat",
+            "coding",
+            "vision"
+          ],
+          "status": "candidate",
+          "hardware": "Pode exigir compromisso entre contexto, velocidade e offload."
+        },
+        {
+          "id": "gpt-oss-20b",
+          "name": "gpt-oss-20b",
+          "tasks": [
+            "reasoning",
+            "tools",
+            "coding"
+          ],
+          "status": "candidate",
+          "hardware": "Experimento avançado; não assumir que caberá confortavelmente na RX 7600 de 8 GB."
+        }
+      ]
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI API",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Acesso por API e cobrança separada por uso. Uma assinatura ChatGPT não fornece automaticamente créditos de API.",
+      "docs": "https://platform.openai.com/docs",
+      "models": []
+    },
+    {
+      "id": "google",
+      "name": "Google Gemini API",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Integração Gemini por API key; modelos descobertos no endpoint oficial e cotas gratuitas dependem do modelo e da região.",
+      "docs": "https://ai.google.dev/gemini-api/docs/models",
+      "models": []
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek API",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Opção para programação, raciocínio e tarefas de agente. O endpoint de modelos permite consultar disponibilidade e metadados.",
+      "docs": "https://api-docs.deepseek.com/",
+      "models": []
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral API",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Modelos gerais e de código; também oferece modelos locais open-weight.",
+      "docs": "https://docs.mistral.ai/models",
+      "models": []
+    },
+    {
+      "id": "xai",
+      "name": "xAI / Grok",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Integração Grok ainda pendente; não exibir modelos fictícios.",
+      "docs": "https://docs.x.ai/",
+      "models": []
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Modelos gratuitos descobertos em tempo real. O aplicativo restringe a lista às variantes :free e ao roteador openrouter/free.",
+      "docs": "https://openrouter.ai/docs",
+      "models": []
+    },
+    {
+      "id": "cerebras",
+      "name": "Cerebras Inference",
+      "mode": "online",
+      "status": "provider_pending",
+      "description": "Catálogo descoberto dinamicamente. Crédito promocional de avaliação pode expirar e não equivale a plano gratuito permanente.",
+      "docs": "https://inference-docs.cerebras.ai/",
+      "models": []
+    }
+  ]
+}
