@@ -41,7 +41,8 @@
  }
  async function load(){
   const root=$("provider-cards");if(!root)return;
-  // Android possui cofre e catálogo próprios; nunca exige pareamento com o PC.
+  if(native&&typeof window.poligonBridge!=="function"){root.replaceChildren(el("p","Atualize o aplicativo para configurar provedores pelo PC pareado.","empty"));return}
+  if(native&&document.getElementById("target")?.value!=="pc"){root.replaceChildren(el("p","Para conectar GPT, Gemini e outros modelos, primeiro pareie o celular com o POLIGON no PC na aba Meu computador. Depois selecione “IA do PC” no topo desta tela. As chaves ficam protegidas no computador.","empty"));return}
   try{
    const overview=await api("/providers");root.replaceChildren();models=[];
    for(const p of overview.providers||[]){
@@ -61,7 +62,7 @@
     };
     const refresh=el("button","Atualizar modelos","outline");refresh.type="button";refresh.dataset.refresh="1";refresh.onclick=()=>fetchModels(p.id,card);
     controls.append(key,connect,refresh);
-    if(p.connected){const disconnect=el("button","Desconectar","text-button");disconnect.type="button";disconnect.onclick=async()=>{disconnect.disabled=true;try{await api("/providers/"+p.id+"/connect","DELETE");models=models.filter(x=>x.provider!==p.id);renderSelect();message(p.name+" desconectado. A IA local voltou a ser o padrão.");await load()}catch(e){message(e.message,true)}finally{disconnect.disabled=false}};controls.append(disconnect)}
+    if(p.connected){const disconnect=el("button","Desconectar","text-button");disconnect.type="button";disconnect.onclick=async()=>{disconnect.disabled=true;try{await api("/providers/"+p.id,"DELETE");models=models.filter(x=>x.provider!==p.id);renderSelect();message(p.name+" desconectado. A IA local voltou a ser o padrão.");await load()}catch(e){message(e.message,true)}finally{disconnect.disabled=false}};controls.append(disconnect)}
     card.append(controls);root.append(card);
     if(p.connected){try{const r=await api("/providers/"+p.id+"/models");optionList(p.id,r.models||[],overview.active_provider===p.id?{provider:p.id,model:overview.active_model}:null)}catch(e){message(e.message,true)}}
    }
