@@ -14,7 +14,7 @@ public class LocalAgent {
  if(path.equals("/disconnect")){prefs.edit().remove("pc_url").remove("pc_token").apply();return obj("ok",true);}
  if(path.equals("/pc-tool"))return remote("/tool","POST",body);
  if(target.equals("pc"))return remote(path,method,body.length()==0?null:body);
- if(path.equals("/status"))return obj("version","2.0.0","owner",false,"allow_actions",true,"remote_url",prefs.getString("pc_url",""),"model_dir",model.getParent(),"install_progress",progress,"engine",obj("ready",ready,"model",modelName,"model_exists",model.exists(),"runtime_exists",true,"message",progress,"gpu_layers",0,"vision",false));
+ if(path.equals("/status"))return obj("version","2.1.0","owner",false,"allow_actions",true,"remote_url",prefs.getString("pc_url",""),"model_dir",model.getParent(),"install_progress",progress,"engine",obj("ready",ready,"model",modelName,"model_exists",model.exists(),"runtime_exists",true,"message",progress,"gpu_layers",0,"vision",false));
  if(path.equals("/install")){install();return obj("ok",true);}
  if(path.equals("/engine/start")){LocalService.begin(ctx);new Thread(()->{try{ensure();}catch(Exception e){progress=e.getMessage();}}).start();return obj("ok",true);}
  if(path.equals("/engine/stop")){stop();ctx.stopService(new Intent(ctx,LocalService.class));return obj("ok",true);}
