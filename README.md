@@ -38,7 +38,7 @@ O código tem seis dígitos, expira em dez minutos e vale uma vez. Cada disposit
 
 ## Privacidade e controle
 
-A inferência acontece somente no dispositivo. PC guarda histórico, tokens e memórias em `~/.poligon`; modelos ficam na pasta `models` do aplicativo, configurável. Android usa armazenamento privado e a pasta específica do app para o modelo. Não há Groq, OpenAI, Gemini, reconhecimento de voz online ou TTS remoto.
+A inferência local continua sendo o padrão e funciona offline. Se o proprietário conectar e selecionar um provedor online, o texto da conversa e os resultados das ferramentas necessários à tarefa serão enviados ao provedor escolhido. As chaves ficam no cofre de credenciais do sistema operacional via `keyring` e não são exibidas novamente pela interface. No Windows, use o Gerenciador de Credenciais; em sistemas sem um cofre seguro configurado, a conexão é recusada. As chamadas online podem estar sujeitas a limites, preços, retenção e políticas de dados do respectivo provedor. Android usa o PC pareado para tarefas online; as credenciais não são copiadas para o celular.
 
 Acesso remoto passa por HTTPS/Cloudflare (não é criptografia ponta a ponta independente do provedor). Quem possui um token pareado tem acesso amplo aos arquivos e ações do PC. Use **Pausar acesso ao PC**, **Revogar** ou **Desconectar túnel** quando necessário. O servidor do PC e os motores de inferência escutam apenas no loopback por padrão. A ponte Android carrega somente os assets locais e bloqueia páginas e frames externos.
 
