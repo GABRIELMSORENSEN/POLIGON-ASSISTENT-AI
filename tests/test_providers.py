@@ -1,0 +1,66 @@
+import unittest
+from unittest.mock import patch
+from poligon import providers
+
+class ProviderAdapterTests(unittest.TestCase):
+    def test_openai_message_conversion_preserves_tool_calls(self):
+        messages = [
+            {"role":"system","content":"system"},
+            {"role":"user","content":"hello"},
+            {"role":"assistant","content":"","tool_calls":[
+                {"id":"call_1","type":"function","function":{"name":"system_info","arguments":"{}"}}
+            ]},
+            {"role":"tool","tool_call_id":"call_1","content":"{\"os\":\"Windows\"}"}
+        ]
+        converted = providers._openai_messages(messages)
+        self.assertEqual(converted[2]["tool_calls"][0]["function"]["name"], "system_info")
+        self.assertEqual(converted[3]["tool_call_id"], "call_1")
+
+    def test_gemini_message_conversion_maps_function_response(self):
+        messages = [
+            {"role":"system","content":"system prompt"},
+            {"role":"user","content":"check pc"},
+            {"role":"assistant","content":"","tool_calls":[
+                {"id":"call_1","type":"function","function":{"name":"system_info","arguments":"{}"}}
+            ]},
+            {"role":"tool","tool_call_id":"call_1","content":"{\"ok\":true}"}
+        ]
+        contents, system = providers._gemini_messages(messages)
+        self.assertEqual(system, "system prompt")
+        self.assertEqual(contents[1]["role"], "model")
+        self.assertEqual(contents[2]["parts"][0]["functionResponse"]["name"], "system_info")
+
+    def test_gemini_schema_removes_unsupported_json_schema_fields(self):
+        schema = {"function":{"name":"test","parameters":{
+            "type":"object","additionalProperties":False,
+            "properties":{"x":{"type":"string","default":"abc"}}
+        }}}
+        converted = providers._gemini_schema(schema)
+        self.assertNotIn("additionalProperties", converted["parameters"])
+        self.assertNotIn("default", converted["parameters"]["properties"]["x"])
+
+    def test_openrouter_only_exposes_free_variants(self):
+        response = {"data":[
+            {"id":"provider/model:free","name":"Free","pricing":{"prompt":"0","completion":"0"}},
+            {"id":"provider/model-paid","name":"Paid","pricing":{"prompt":"0.1","completion":"0.2"}},
+            {"id":"provider/model:free-paid","name":"Bad free","pricing":{"prompt":"0.1","completion":"0"}}
+        ]}
+        with patch.object(providers, "credential", return_value="secret"), patch.object(providers, "_request", return_value=response):
+            models = providers.list_models("openrouter")
+        ids = {item["id"] for item in models}
+        self.assertIn("openrouter/free", ids)
+        self.assertIn("provider/model:free", ids)
+        self.assertNotIn("provider/model-paid", ids)
+        self.assertNotIn("provider/model:free-paid", ids)
+
+    def test_gemini_model_catalog_uses_live_supported_generation_methods(self):
+        response = {"models":[
+            {"name":"models/gemini-live","displayName":"Gemini Live","supportedGenerationMethods":["generateContent"]},
+            {"name":"models/gemini-embed","supportedGenerationMethods":["embedContent"]}
+        ]}
+        with patch.object(providers, "credential", return_value="secret"), patch.object(providers, "_request", return_value=response):
+            models = providers.list_models("gemini")
+        self.assertEqual([item["id"] for item in models], ["gemini-live"])
+
+if __name__ == "__main__":
+    unittest.main()
