@@ -29,6 +29,6 @@ jobs:
       - name: Validate model catalog JSON
         run: python -m json.tool web/model-catalog.json > /dev/null
       - name: Check frontend JavaScript syntax
-        run: node --check web/app.js && node --check web/providers.js
+        run: node --check web/app.js && node --check web/providers.js && node --check web/voice.js
       - name: Run backend tests
         run: python -m unittest discover -s tests -v
