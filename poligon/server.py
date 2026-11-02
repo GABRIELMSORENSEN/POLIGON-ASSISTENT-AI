@@ -5,7 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request, UploadFile, File
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from . import __version__,state,engine,tools,agent,installer
+from . import __version__,state,engine,tools,agent,installer,providers
 
 state.init()
 PAIR={'code':'','expires':0};attempts={};tunnel_process=None;tunnel_url=''
@@ -50,7 +50,41 @@ def health():return {'name':'POLIGON','version':__version__,'local_inference':Tr
 
 @app.get('/api/status')
 def status(identity=Depends(who)):
-    return {'install_progress':installer.progress,'version':__version__,'engine':engine.status(),'allow_actions':state.get('allow_actions',True),'owner':identity=='owner','remote_url':tunnel_url,'time':time.time(),'model_dir':str(engine.model_dir()),'pending':len(state.rows("SELECT id FROM tasks WHERE status IN ('queued','running','waiting')")),'memory_count':len(state.rows('SELECT id FROM memories'))}
+    online=providers.overview()
+    return {'install_progress':installer.progress,'version':__version__,'engine':engine.status(),'allow_actions':state.get('allow_actions',True),'owner':identity=='owner','remote_url':tunnel_url,'time':time.time(),'model_dir':str(engine.model_dir()),'pending':len(state.rows("SELECT id FROM tasks WHERE status IN ('queued','running','waiting')")),'memory_count':len(state.rows('SELECT id FROM memories')),'online':online}
+
+@app.get('/api/providers')
+def provider_overview(identity=Depends(who)):
+    return providers.overview()
+
+class ProviderConnect(BaseModel):
+    api_key:str=Field(min_length=12,max_length=512)
+@app.post('/api/providers/{provider}/connect')
+def provider_connect(provider:str,body:ProviderConnect,identity=Depends(owner)):
+    try:return providers.connect(provider,body.api_key)
+    except Exception as e:raise HTTPException(400,str(e))
+@app.get('/api/providers/{provider}/models')
+def provider_models(provider:str,identity=Depends(owner)):
+    try:return {'models':providers.list_models(provider)}
+    except Exception as e:raise HTTPException(400,str(e))
+class ProviderSelect(BaseModel):
+    provider:str
+    model:str
+@app.post('/api/providers/select')
+def provider_select(body:ProviderSelect,identity=Depends(owner)):
+    try:return providers.select(body.provider,body.model)
+    except Exception as e:raise HTTPException(400,str(e))
+@app.post('/api/providers/local')
+def provider_local(identity=Depends(owner)):
+    state.set('online_provider','local');state.set('online_model','')
+    return {'provider':'local'}
+@app.delete('/api/providers/{provider}')
+def provider_disconnect(provider:str,identity=Depends(owner)):
+    try:providers.remove_credential(provider)
+    except Exception as e:raise HTTPException(400,str(e))
+    if state.get('online_provider')==provider:
+        state.set('online_provider','local');state.set('online_model','')
+    return {'ok':True}
 
 class TaskIn(BaseModel):
     prompt:str=Field(min_length=1,max_length=12000)
