@@ -83,3 +83,5 @@
 @keyframes orbThink{0%,100%{filter:hue-rotate(0);transform:rotate(-5deg)}50%{filter:hue-rotate(55deg);transform:rotate(5deg)}}
 @media(max-width:560px){.voice-panel{min-height:530px;padding:40px 20px 24px}.voice-orb{width:145px;height:145px;margin:42px auto 30px}.voice-actions{flex-direction:column}.voice-actions button{width:100%}}
 @media(prefers-reduced-motion:reduce){.voice-orb,.voice-orb:before,.voice-orb:after{animation:none!important}}
+
+.model-specs{font-size:10px;line-height:1.6;color:#c3b9ee;margin:7px 0}.model-row p{font-size:10px;line-height:1.5}
