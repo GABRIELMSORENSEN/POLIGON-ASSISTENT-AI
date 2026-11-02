@@ -20,7 +20,7 @@ A aba **Modelos** descobre modelos dinamicamente nos endpoints oficiais e permit
 
 | Provedor | Situação de custo | Observação |
 |---|---|---|
-| Google Gemini API | Camada gratuita para modelos elegíveis | Limites dependem do modelo, região e conta; confira a cota no AI Studio. |
+| Google Gemini API | Camada gratuita para modelos elegíveis | O seletor filtra Gemini 3.8 Flash, 3.6 Flash e 3.5 Flash-Lite. No plano gratuito, conteúdo pode ser usado para melhorar produtos Google. |
 | OpenRouter | Variantes gratuitas | O Poligon restringe a seleção a `openrouter/free` e modelos `:free`; disponibilidade e limites mudam. |
 | Cerebras Inference | Crédito promocional de avaliação | Pode exigir método de pagamento e expirar; não é gratuidade permanente. |
 | DeepSeek API | Pago por uso | Modelos e capacidades consultados dinamicamente. |
