@@ -77,6 +77,11 @@ def provider_select(body:ProviderSelect,identity=Depends(owner)):
         engine.stop()
         return result
     except Exception as e:raise HTTPException(400,str(e))
+@app.post('/api/providers/auto')
+def provider_auto(identity=Depends(owner)):
+    state.set('online_provider','auto');state.set('online_model','');engine.stop()
+    return {'provider':'auto','policy':'free_only_then_local'}
+
 @app.post('/api/providers/local')
 def provider_local(identity=Depends(owner)):
     state.set('online_provider','local');state.set('online_model','')
