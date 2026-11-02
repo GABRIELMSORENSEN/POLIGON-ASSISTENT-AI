@@ -9,6 +9,7 @@ public class LocalAgent {
  private JSONArray array(String name)throws JSONException{return new JSONArray(prefs.getString(name,"[]"));}
  public Object request(JSONObject r)throws Exception{
  String path=r.getString("path"),method=r.optString("method","GET"),target=r.optString("target","local");JSONObject body=r.optJSONObject("body");if(body==null)body=new JSONObject();
+ if(path.startsWith("/providers"))return providerRoute(path,method,body);
  if(path.equals("/connect")){String url=body.getString("url").replaceAll("/+$","");URI u=new URI(url);if(!"https".equals(u.getScheme())||u.getHost()==null||u.getUserInfo()!=null||u.getQuery()!=null||!(u.getPath().isEmpty()||u.getPath().equals("/")))throw new IOException("Use o endereço HTTPS do PC, sem caminho extra.");JSONObject result=(JSONObject)http(url+"/api/pair","POST",obj("code",body.getString("code"),"name",body.optString("name","Android")),"");prefs.edit().putString("pc_url",url).putString("pc_token",result.getString("token")).apply();return obj("ok",true);}
  if(path.equals("/disconnect")){prefs.edit().remove("pc_url").remove("pc_token").apply();return obj("ok",true);}
  if(path.equals("/pc-tool"))return remote("/tool","POST",body);
