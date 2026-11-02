@@ -3,6 +3,7 @@ name: POLIGON desktop and Android builds
 on:
   push:
     branches: [master]
+    tags: ["v*"]
     paths:
       - 'android/**'
       - 'poligon/**'
@@ -21,9 +22,6 @@ on:
         description: Release tag (used only when publishing)
         required: false
         default: nightly
-  push:
-    tags:
-      - "v*"
 
 permissions:
   contents: read
