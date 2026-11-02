@@ -146,3 +146,5 @@ $('studio-video-check').onclick=()=>action(async()=>{
  if(result.status==='SUCCEEDED'&&!(result.output||[]).length)$('studio-video-status').textContent+=' · Saída ainda não informada pelo provedor.';
 });
 if(native){const nav=document.querySelector('[data-page="studio"]');if(nav)nav.hidden=true}
+
+window.poligonBridge=bridge;
