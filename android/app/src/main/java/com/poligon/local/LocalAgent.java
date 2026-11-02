@@ -42,7 +42,7 @@ public class LocalAgent {
  private JSONObject schema(String name,String desc,JSONObject properties,JSONArray required)throws Exception{return obj("type","function","function",obj("name",name,"description",desc,"parameters",obj("type","object","properties",properties,"required",required)));}
  private Object tool(String name,JSONObject args)throws Exception{
  if(name.equals("device_info")){ActivityManager.MemoryInfo mi=new ActivityManager.MemoryInfo();((ActivityManager)ctx.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryInfo(mi);BatteryManager bm=(BatteryManager)ctx.getSystemService(Context.BATTERY_SERVICE);return obj("model",Build.MANUFACTURER+" "+Build.MODEL,"android",Build.VERSION.RELEASE,"battery_percent",bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY),"memory_free_bytes",mi.availMem,"memory_total_bytes",mi.totalMem,"storage_free_bytes",ctx.getFilesDir().getFreeSpace(),"time",java.time.ZonedDateTime.now().toString());}
- if(name.equals("remember")){JSONArray a=array("memories");String text=args.getString("text").trim();if(text.length()>2000)throw new IOException("Memória muito longa");if(text.isEmpty())throw new IOException("Memória vazia");a.put(obj("id",UUID.randomUUID().toString(),"text",text,"created",System.currentTimeMillis()/1000.0));prefs.edit().putString("memories",a.toString()).apply();boolean shared=false;try{remote("/memories","POST",obj("text",text));shared=true;}catch(Exception ignored){}return obj("saved",text,"shared_with_pc",shared);}
+ if(name.equals("remember")){JSONArray a=array("memories");String text=args.getString("text").trim();if(text.length()>2000)throw new IOException("Memória muito longa");if(text.isEmpty())throw new IOException("Memória vazia");a.put(obj("id",UUID.randomUUID().toString(),"text",text,"created",System.currentTimeMillis()/1000.0,"source","android"));prefs.edit().putString("memories",a.toString()).apply();boolean shared=false;try{remote("/memories","POST",obj("text",text));shared=true;}catch(Exception ignored){}return obj("saved",text,"shared_with_pc",shared);}
  if(name.equals("send_pc_task"))return remote("/tasks","POST",obj("prompt",args.getString("prompt"),"mode","auto"));
  if(name.equals("get_pc_task")){JSONObject j=(JSONObject)remote("/tasks/"+args.getString("id"),"GET",null);return obj("id",j.getString("id"),"status",j.getString("status"),"result",j.optString("result"),"error",j.optString("error"));}
  throw new IOException("Ferramenta desconhecida: "+name);
@@ -54,7 +54,7 @@ public class LocalAgent {
    if(value instanceof JSONArray){
     JSONArray merged=new JSONArray();HashSet<String> seen=new HashSet<>();
     JSONArray remote=(JSONArray)value;
-    for(int pass=0;pass<2;pass++){JSONArray source=pass==0?remote:local;for(int i=0;i<source.length();i++){JSONObject item=source.optJSONObject(i);if(item==null)continue;String text=item.optString("text","");if(!text.isEmpty()&&seen.add(text))merged.put(item);}}
+    for(int pass=0;pass<2;pass++){JSONArray source=pass==0?remote:local;for(int i=0;i<source.length();i++){JSONObject item=source.optJSONObject(i);if(item==null)continue;if(pass==1&&!item.optString("source","android").equals("android"))continue;String text=item.optString("text","");if(!text.isEmpty()&&seen.add(text)){if(pass==0){JSONObject synced=new JSONObject(item.toString());synced.put("source","pc");merged.put(synced);}else merged.put(item);}}}
     while(merged.length()>100)merged.remove(0);
     prefs.edit().putString("memories",merged.toString()).apply();
     return merged;
