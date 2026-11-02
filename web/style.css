@@ -19,3 +19,14 @@
 .model-cost{display:block;color:#c4ad7c;font-size:10px;margin-top:7px}
 @media(max-width:850px){.model-catalog{grid-template-columns:1fr}}
 @media(max-width:650px){.provider-card{padding:16px}.model-row-top{flex-direction:column}.model-status{white-space:normal;text-align:left}.catalog-notice{font-size:11px}}
+
+/* Voice controls inside the central chat */
+.voice-button{border-color:#4a5148;color:#d7e6cc;white-space:nowrap}
+.voice-button[aria-pressed="true"]{border-color:#b9d895;background:#283225;color:#e4f3d9}
+#speak-answer{white-space:nowrap}
+@media(max-width:560px){
+ .composer-bottom{flex-wrap:wrap;gap:8px}
+ .composer-bottom .mode{order:3;flex:1 1 100%}
+ .voice-button{flex:0 0 auto}
+ #speak-answer{font-size:10px}
+}
