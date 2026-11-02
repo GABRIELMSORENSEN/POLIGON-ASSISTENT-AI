@@ -271,13 +271,12 @@ def auto_chat(messages, tools=None, max_tokens=1024):
         pass
     if not candidates:
         return None
-    failures = []
     for provider, model in candidates:
         try:
             return chat(messages, tools, max_tokens, provider_override=provider, model_override=model)
-        except Exception as exc:
-            failures.append(f"{provider}: {exc}")
-    raise RuntimeError("Nenhum provedor gratuito respondeu. " + " | ".join(failures)[:1200])
+        except Exception:
+            continue
+    return None
 
 def chat(messages, tools=None, max_tokens=1024, provider_override=None, model_override=None):
     provider = provider_override or state.get("online_provider", "local")
